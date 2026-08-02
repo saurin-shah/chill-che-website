@@ -126,6 +126,92 @@
         font-size: 14px;
         font-weight: 700;
       }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .daily-digit {
+        position: relative;
+        flex: 0 0 auto;
+      }
+      .daily-digit-button {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-areas: "label number" "hint number";
+        column-gap: 9px;
+        align-items: center;
+        min-width: 105px;
+        min-height: 48px;
+        padding: 7px 10px;
+        border: 1px solid var(--accent);
+        background: #fffaf4;
+        color: var(--ink);
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+      }
+      .daily-digit-label {
+        grid-area: label;
+        color: var(--accent);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        line-height: 1.1;
+      }
+      .daily-digit-hint {
+        grid-area: hint;
+        color: var(--muted);
+        font-size: 9px;
+        line-height: 1.1;
+      }
+      .daily-digit-number {
+        grid-area: number;
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .daily-digit.ready .daily-digit-number {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .daily-digit-card {
+        position: absolute;
+        top: calc(100% + 11px);
+        right: 0;
+        width: min(330px, calc(100vw - 40px));
+        padding: 18px;
+        border: 1px solid var(--accent);
+        background: #fff;
+        box-shadow: 0 14px 34px #1112;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-5px);
+        transition: opacity 0.18s ease, transform 0.18s ease,
+          visibility 0.18s;
+      }
+      .daily-digit.open .daily-digit-card {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .daily-digit-card strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--accent);
+        font-size: 11px;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+      .daily-digit-card p {
+        margin: 0;
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.45;
+      }
       .button {
         display: inline-block;
         padding: 12px 20px;
@@ -355,8 +441,16 @@
         font-size: 25px;
       }
       @media (max-width: 760px) {
+        nav {
+          gap: 12px;
+        }
+        .nav-actions {
+          margin-left: auto;
+          gap: 9px;
+        }
         .menu {
           display: block;
+          order: 2;
         }
         .links {
           display: none;
@@ -368,6 +462,23 @@
           padding: 22px;
           flex-direction: column;
           border-bottom: 1px solid var(--line);
+        }
+        .daily-digit-button {
+          min-width: 51px;
+          min-height: 44px;
+          padding: 6px 8px;
+          grid-template-areas: "label number";
+          column-gap: 5px;
+        }
+        .daily-digit-label {
+          max-width: 28px;
+          font-size: 7px;
+        }
+        .daily-digit-hint {
+          display: none;
+        }
+        .daily-digit-number {
+          font-size: 24px;
         }
         .links.open {
           display: flex;
@@ -601,12 +712,25 @@
             src="chill-che-logo.jpg"
             alt="Chill Che logo"
           /><span>CHILL CHE</span></a
-        ><button class="menu" aria-label="Open menu">☰</button>
-        <div class="links">
-          <a href="#capabilities">Capabilities</a
-          ><a href="#products">Products</a><a href="#quality">Quality</a
-          ><a href="#about">About</a
-          ><a class="button" href="#contact">Request a quote</a>
+        ><div class="nav-actions">
+          <div class="links">
+            <a href="#capabilities">Capabilities</a
+            ><a href="#products">Products</a><a href="#quality">Quality</a
+            ><a href="#about">About</a
+            ><a class="button" href="#contact">Request a quote</a>
+          </div>
+          <div class="daily-digit" id="daily-digit">
+            <button class="daily-digit-button" type="button" aria-expanded="false" aria-controls="daily-digit-card" title="Discover today's engineering digit">
+              <span class="daily-digit-label">DAILY DIGIT</span>
+              <span class="daily-digit-hint">Tap for a fact</span>
+              <span class="daily-digit-number" aria-live="polite">–</span>
+            </button>
+            <div class="daily-digit-card" id="daily-digit-card" role="region" aria-label="Daily engineering fact">
+              <strong>Today’s engineering fact</strong>
+              <p></p>
+            </div>
+          </div>
+          <button class="menu" aria-label="Open menu">☰</button>
         </div>
       </nav>
     </header>
@@ -1198,6 +1322,89 @@
         .querySelectorAll(".links a")
         .forEach((a) => (a.onclick = () => l.classList.remove("open")));
       document.getElementById("year").textContent = new Date().getFullYear();
+      const engineeringFacts = [
+        "Helical gears run more quietly than spur gears because their teeth engage gradually.",
+        "A fillet reduces stress concentration by smoothing the transition between two surfaces.",
+        "Bearings reduce friction by replacing sliding contact with rolling contact.",
+        "Heat treatment can change a metal’s hardness without changing its basic shape.",
+        "Surface finish can strongly influence friction, sealing and fatigue life.",
+        "Tolerances define acceptable variation—not a single perfectly exact dimension.",
+        "Shot peening can improve fatigue life by creating compressive stress at a surface.",
+        "A keyway transfers torque but also creates a local stress concentration.",
+        "Hard chrome plating can improve wear resistance and restore a shaft’s working diameter.",
+        "Nitriding hardens a steel surface while generally causing less distortion than quench hardening.",
+        "A datum gives measurements a consistent reference for inspection and assembly.",
+        "Runout combines the effects of roundness, straightness and alignment during rotation.",
+        "Backlash gives mating gear teeth the clearance needed for lubrication and thermal expansion.",
+        "Lubrication separates moving surfaces and helps carry away heat and wear particles.",
+        "Stainless steel resists corrosion because chromium forms a thin passive oxide layer.",
+        "Forging usually improves grain flow compared with machining the same shape from plate.",
+        "Grinding can achieve tighter tolerances and finer finishes than conventional turning.",
+        "Ultrasonic testing uses high-frequency sound waves to detect internal discontinuities.",
+        "Magnetic-particle testing reveals surface and near-surface flaws in ferromagnetic materials.",
+        "Dye-penetrant testing can reveal surface-breaking flaws in many nonporous materials.",
+        "A chamfer removes a sharp edge and can make assembly easier.",
+        "Preload can increase the stiffness and positional accuracy of a bearing arrangement.",
+        "Thermal expansion must be considered when precision assemblies operate across changing temperatures.",
+        "A larger shaft diameter can greatly increase torsional stiffness because diameter has a fourth-power effect.",
+        "Engineering fits control whether mating parts slide freely, locate accurately or lock together.",
+        "Residual stress can remain in a component even when no external load is applied.",
+        "Annealing can soften metal, relieve stress and improve machinability.",
+        "Case hardening combines a wear-resistant surface with a tougher core.",
+        "CNC repeatability describes how closely a machine returns to the same commanded position.",
+        "A surface may look smooth but still require measurement to verify its roughness.",
+        "Gears transmit torque by controlled rolling and sliding contact between shaped teeth.",
+        "A spline can transmit torque while allowing axial movement between connected parts.",
+        "The neutral axis of a bent beam experiences zero longitudinal bending stress.",
+        "Corrosion allowance adds material so a component can lose thickness without losing function.",
+        "Traceability links a finished component back to its material, process and inspection records.",
+        "A go/no-go gauge checks whether a feature stays within its permitted size limits.",
+        "Torque is a turning effect equal to force multiplied by perpendicular distance.",
+        "A flywheel stores rotational energy and helps smooth speed fluctuations.",
+        "Interference fits rely on elastic deformation to hold assembled parts together.",
+        "Designing for manufacturability can reduce cost before the first component is produced.",
+        "A washer spreads a fastener’s load over a larger contact area.",
+        "Fatigue cracks can grow under repeated loads that are below a material’s static strength.",
+        "Balance becomes increasingly important as a rotating component’s operating speed rises.",
+        "A radius at a shaft shoulder can improve fatigue strength when the mating part allows clearance.",
+        "Inspection records turn a manufactured dimension into documented, reviewable evidence."
+      ];
+      const dailyDigit = document.getElementById("daily-digit");
+      const dailyButton = dailyDigit.querySelector("button");
+      const dailyNumber = dailyDigit.querySelector(".daily-digit-number");
+      const dailyFact = dailyDigit.querySelector(".daily-digit-card p");
+      const indiaDate = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+      const seededHash = (value) => {
+        let hash = 2166136261;
+        for (let i = 0; i < value.length; i++) {
+          hash ^= value.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return hash >>> 0;
+      };
+      dailyNumber.textContent = (seededHash(`chill-che-digit-${indiaDate}`) % 9) + 1;
+      dailyFact.textContent = engineeringFacts[seededHash(`chill-che-fact-${indiaDate}`) % engineeringFacts.length];
+      requestAnimationFrame(() => dailyDigit.classList.add("ready"));
+      const closeDailyDigit = () => {
+        dailyDigit.classList.remove("open");
+        dailyButton.setAttribute("aria-expanded", "false");
+      };
+      dailyButton.addEventListener("click", () => {
+        const willOpen = !dailyDigit.classList.contains("open");
+        dailyDigit.classList.toggle("open", willOpen);
+        dailyButton.setAttribute("aria-expanded", String(willOpen));
+      });
+      document.addEventListener("click", (event) => {
+        if (!dailyDigit.contains(event.target)) closeDailyDigit();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeDailyDigit();
+      });
       const submitted =
         new URLSearchParams(location.search).get("submitted") === "true";
       if (submitted) {
