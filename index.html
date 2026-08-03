@@ -339,6 +339,55 @@
         margin: 0;
         color: var(--muted);
       }
+      .capability-card {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        display: flex;
+        min-height: 220px;
+        flex-direction: column;
+        justify-content: flex-end;
+        background: #151515;
+        border-color: #2c2c2c;
+      }
+      .capability-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background-image: var(--capability-image);
+        background-position: center;
+        background-size: cover;
+        filter: saturate(0.72) contrast(1.06);
+        opacity: 0.92;
+        transform: scale(1.035);
+        transition: opacity 0.45s ease, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .capability-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(0deg, rgba(8, 8, 8, 0.94) 0%, rgba(8, 8, 8, 0.68) 48%, rgba(8, 8, 8, 0.18) 100%),
+          linear-gradient(90deg, rgba(217, 119, 6, 0.12), transparent 62%);
+      }
+      .capability-card:hover::before {
+        opacity: 1;
+        transform: scale(1.085);
+      }
+      .capability-card h3,
+      .capability-card p {
+        position: relative;
+        max-width: 100%;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.72);
+      }
+      .capability-card h3 {
+        color: #fff;
+      }
+      .capability-card p {
+        color: #e1e3e6;
+      }
       .product-card {
         padding: 0;
         overflow: hidden;
@@ -957,41 +1006,41 @@
             </p>
           </div>
           <div class="grid">
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/cnc-machining.webp')">
               <h3>CNC Machining</h3>
               <p>
                 Precision turning, milling, grinding and complex made-to-print
                 components.
               </p>
             </article>
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/reverse-engineering.webp')">
               <h3>Reverse Engineering</h3>
               <p>
                 Component study, measurement support and practical manufacturing
                 development.
               </p>
             </article>
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/fabrication.webp')">
               <h3>Fabrication</h3>
               <p>
                 Custom industrial assemblies, trolleys and fabricated equipment.
               </p>
             </article>
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/design-support.webp')">
               <h3>Design Support</h3>
               <p>
                 Manufacturability input and coordination from requirement
                 through realization.
               </p>
             </article>
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/industrial-sourcing.webp')">
               <h3>Industrial Sourcing</h3>
               <p>
                 A focused supply partner for specialized materials and
                 engineered products.
               </p>
             </article>
-            <article class="card">
+            <article class="card capability-card" style="--capability-image: url('capability-images/vendor-development.webp')">
               <h3>Vendor Development</h3>
               <p>
                 Capability matching, follow-up and quality coordination across
