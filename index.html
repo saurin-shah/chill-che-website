@@ -1805,8 +1805,10 @@
         "Traceability links a finished component back to its material, process and inspection records."
       ];
 
-      const pollStoreKey = "chillche-poll-history-v1";
       const voteStoreKey = "chillche-poll-votes-v1";
+      const deviceStoreKey = "chillche-poll-device-v1";
+      const supabaseUrl = "https://sxatuhuygjefazkkfhrc.supabase.co";
+      const supabaseKey = "sb_publishable_D4JwSXa5xlkGOb24Za3d2w_WCZShuyA";
       const dateKey = new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit"
       }).format(new Date());
@@ -1830,9 +1832,10 @@
       const pollId = activePoll[0];
       const question = activePoll[1];
       const answers = activePoll[2];
-      const history = JSON.parse(localStorage.getItem(pollStoreKey) || "{}");
       const voted = JSON.parse(localStorage.getItem(voteStoreKey) || "{}");
-      const counts = Array.isArray(history[pollId]) ? history[pollId] : answers.map(() => 0);
+      const counts = answers.map(() => 0);
+      let votePending = false;
+      let resultsPromise = null;
       const overlay = document.getElementById("poll-overlay");
       const optionsBox = document.getElementById("poll-options");
       document.getElementById("nav-digit").textContent = dailyDigit;
@@ -1859,7 +1862,7 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = "poll-option" + (voted[pollId] === index ? " selected" : "");
-          button.disabled = showResults;
+          button.disabled = showResults || votePending;
           const fill = document.createElement("span");
           fill.className = "poll-fill";
           const label = document.createElement("span");
@@ -1878,21 +1881,95 @@
           optionsBox.append(button);
         });
         document.getElementById("poll-note").textContent = showResults
-          ? "Results saved for the next time this question returns."
-          : "Choose wisely. Engineering history may remember this.";
+          ? "Live results from everyone who voted."
+          : votePending ? "Recording your vote…" : "Choose wisely. Engineering history may remember this.";
       }
-      function castVote(index) {
-        if (Object.prototype.hasOwnProperty.call(voted, pollId)) return;
-        counts[index]++;
-        history[pollId] = counts;
-        voted[pollId] = index;
-        localStorage.setItem(pollStoreKey, JSON.stringify(history));
-        localStorage.setItem(voteStoreKey, JSON.stringify(voted));
-        renderPoll(true);
-        if (typeof gtag === "function") gtag("event", "daily_poll_vote", { poll_id: pollId, option_index: index });
+
+      function getDeviceId() {
+        let deviceId = localStorage.getItem(deviceStoreKey);
+        if (deviceId) return deviceId;
+        if (crypto.randomUUID) {
+          deviceId = crypto.randomUUID();
+        } else {
+          const bytes = crypto.getRandomValues(new Uint8Array(16));
+          bytes[6] = (bytes[6] & 15) | 64;
+          bytes[8] = (bytes[8] & 63) | 128;
+          const hex = [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+          deviceId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+        }
+        localStorage.setItem(deviceStoreKey, deviceId);
+        return deviceId;
+      }
+
+      async function pollRequest(functionName, body) {
+        const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${functionName}`, {
+          method: "POST",
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+        if (!response.ok) throw new Error(`Poll service returned ${response.status}`);
+        return response.json();
+      }
+
+      function applyResults(rows) {
+        counts.fill(0);
+        rows.forEach((row) => {
+          const index = Number(row.option_index);
+          if (index >= 0 && index < counts.length) counts[index] = Number(row.vote_count) || 0;
+        });
+      }
+
+      async function loadPollResults() {
+        if (resultsPromise) return resultsPromise;
+        resultsPromise = (async () => {
+          const hasVoted = Object.prototype.hasOwnProperty.call(voted, pollId);
+          const rows = hasVoted
+            ? await pollRequest("cast_poll_vote", {
+                p_poll_id: pollId,
+                p_device_id: getDeviceId(),
+                p_option_index: voted[pollId]
+              })
+            : await pollRequest("get_poll_results", { p_poll_id: pollId });
+          applyResults(rows);
+          if (overlay.classList.contains("open")) renderPoll(hasVoted);
+        })().catch((error) => {
+          console.error("Unable to load shared poll results", error);
+          resultsPromise = null;
+          document.getElementById("poll-note").textContent = "Live results are temporarily unavailable. Please try again.";
+        });
+        return resultsPromise;
+      }
+
+      async function castVote(index) {
+        if (votePending || Object.prototype.hasOwnProperty.call(voted, pollId)) return;
+        votePending = true;
+        renderPoll(false);
+        try {
+          const rows = await pollRequest("cast_poll_vote", {
+            p_poll_id: pollId,
+            p_device_id: getDeviceId(),
+            p_option_index: index
+          });
+          applyResults(rows);
+          voted[pollId] = index;
+          localStorage.setItem(voteStoreKey, JSON.stringify(voted));
+          votePending = false;
+          renderPoll(true);
+          if (typeof gtag === "function") gtag("event", "daily_poll_vote", { poll_id: pollId, option_index: index });
+        } catch (error) {
+          console.error("Unable to record poll vote", error);
+          votePending = false;
+          renderPoll(false);
+          document.getElementById("poll-note").textContent = "Your vote could not be recorded. Please check your connection and try again.";
+        }
       }
       function openPoll() {
         renderPoll(Object.prototype.hasOwnProperty.call(voted, pollId));
+        loadPollResults();
         overlay.classList.add("open");
         document.body.style.overflow = "hidden";
         document.getElementById("poll-close").focus();
@@ -1908,7 +1985,7 @@
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && overlay.classList.contains("open")) closePoll(); });
       if (new URLSearchParams(location.search).get("poll") === "open") {
         openPoll();
-        history.replaceState(null, "", location.pathname + location.hash);
+        window.history.replaceState(null, "", location.pathname + location.hash);
       }
     </script>
   </body>
