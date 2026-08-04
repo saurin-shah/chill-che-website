@@ -271,6 +271,13 @@
         gap: 16px;
         margin-bottom: 22px;
       }
+      .digit-explainer {
+        margin: -4px 0 18px;
+        color: #777;
+        font-size: 12px;
+        line-height: 1.5;
+        letter-spacing: .01em;
+      }
       .digit-display strong {
         display: grid;
         place-items: center;
@@ -533,7 +540,7 @@
         background-position: center;
         background-size: cover;
         filter: grayscale(1) sepia(.12);
-        opacity: .19;
+        opacity: .42;
         transform: scale(1.035);
         transition: opacity .45s ease, transform .65s cubic-bezier(.22, 1, .36, 1);
       }
@@ -543,11 +550,11 @@
         inset: 0;
         z-index: -1;
         background:
-          linear-gradient(90deg, rgb(255 255 255 / 97%) 0%, rgb(255 255 255 / 90%) 48%, rgb(255 255 255 / 60%) 100%),
+          linear-gradient(90deg, rgb(255 255 255 / 94%) 0%, rgb(255 255 255 / 78%) 48%, rgb(255 255 255 / 34%) 100%),
           linear-gradient(0deg, rgb(217 119 6 / 3.5%), rgb(217 119 6 / 3.5%));
       }
       .capability-card:hover::before {
-        opacity: .29;
+        opacity: .52;
         transform: scale(1.085);
       }
       .capability-card h3,
@@ -1047,6 +1054,7 @@
             <p id="digit-message"></p>
           </div>
         </div>
+        <p class="digit-explainer">Every day, we post a number from 1 to 9—just for fun. Because why not?</p>
         <div class="daily-fact-block">
           <strong>Today’s engineering fact</strong>
           <p id="daily-fact"></p>
