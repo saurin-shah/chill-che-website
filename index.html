@@ -126,92 +126,208 @@
         font-size: 14px;
         font-weight: 700;
       }
-      .nav-actions {
+      .nav-tab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 2px;
+        transition: color .2s ease, transform .2s ease;
+      }
+      .nav-tab::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 3px;
+        left: 0;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform .25s ease;
+      }
+      .nav-tab:hover {
+        color: #a85400;
+        transform: translateY(-2px);
+      }
+      .nav-tab:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+      .nav-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 7px;
+        background: #f7eee3;
+        color: var(--accent);
+        transition: transform .25s ease, background .25s ease;
+      }
+      .nav-icon svg { width: 13px; height: 13px; stroke-width: 2.4; }
+      .nav-tab:hover .nav-icon { transform: rotate(-7deg) scale(1.08); background: #ffe1b8; }
+      .links .quote-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid #111;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #111, #343434);
+        box-shadow: 0 5px 16px rgb(0 0 0 / 15%);
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .links .quote-tab:hover { transform: translateY(-2px); box-shadow: 0 9px 22px rgb(0 0 0 / 23%); }
+      .quote-arrow {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--accent);
+        transition: transform .2s ease;
+      }
+      .quote-tab:hover .quote-arrow { transform: translateX(3px); }
+      .daily-digit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 9px 7px 13px;
+        border: 1px solid #c46600;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #fff8ed, #ffe1b8);
+        color: #4a2600;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 5px 16px rgb(217 119 6 / 18%);
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+      }
+      .daily-digit:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #fff4e3, #ffd293);
+        box-shadow: 0 8px 22px rgb(217 119 6 / 28%);
+      }
+      .poll-tease {
+        padding: 3px 6px;
+        border-radius: 999px;
+        background: #111;
+        color: #fff;
+        font-size: 9px;
+        line-height: 1;
+        letter-spacing: .09em;
+        animation: pollPulse 2.2s ease-in-out infinite;
+      }
+      .daily-digit strong {
+        display: grid;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 15px;
+        border-radius: 50%;
+      }
+      @keyframes pollPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgb(17 17 17 / 0%); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgb(217 119 6 / 13%); }
+      }
+      .poll-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        place-items: center;
+        padding: 20px;
+        background: rgb(17 17 17 / 65%);
+      }
+      .poll-overlay.open { display: grid; }
+      .poll-panel {
+        position: relative;
+        width: min(570px, 100%);
+        max-height: min(760px, calc(100vh - 36px));
+        overflow-y: auto;
+        padding: 34px;
+        border-top: 6px solid var(--accent);
+        background: #fff;
+        box-shadow: 0 24px 70px rgb(0 0 0 / 28%);
+      }
+      .poll-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--line);
+        background: #fff;
+        font-size: 23px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .digit-display {
         display: flex;
         align-items: center;
         gap: 16px;
+        margin-bottom: 22px;
       }
-      .daily-digit {
-        position: relative;
-        flex: 0 0 auto;
-      }
-      .daily-digit-button {
+      .digit-display strong {
         display: grid;
-        grid-template-columns: auto auto;
-        grid-template-areas: "label number" "hint number";
-        column-gap: 9px;
-        align-items: center;
-        min-width: 105px;
-        min-height: 48px;
-        padding: 7px 10px;
-        border: 1px solid var(--accent);
-        background: #fffaf4;
-        color: var(--ink);
-        cursor: pointer;
-        font: inherit;
-        text-align: left;
+        place-items: center;
+        flex: 0 0 58px;
+        height: 58px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 30px;
       }
-      .daily-digit-label {
-        grid-area: label;
-        color: var(--accent);
-        font-size: 9px;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        line-height: 1.1;
-      }
-      .daily-digit-hint {
-        grid-area: hint;
-        color: var(--muted);
-        font-size: 9px;
-        line-height: 1.1;
-      }
-      .daily-digit-number {
-        grid-area: number;
-        font-size: 28px;
-        font-weight: 800;
-        line-height: 1;
-        opacity: 0;
-        transform: translateY(4px);
-        transition: opacity 0.45s ease, transform 0.45s ease;
-      }
-      .daily-digit.ready .daily-digit-number {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .daily-digit-card {
-        position: absolute;
-        top: calc(100% + 11px);
-        right: 0;
-        width: min(330px, calc(100vw - 40px));
-        padding: 18px;
-        border: 1px solid var(--accent);
-        background: #fff;
-        box-shadow: 0 14px 34px #1112;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-5px);
-        transition: opacity 0.18s ease, transform 0.18s ease,
-          visibility 0.18s;
-      }
-      .daily-digit.open .daily-digit-card {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-      .daily-digit-card strong {
-        display: block;
-        margin-bottom: 5px;
+      .digit-display p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+      .poll-kicker {
         color: var(--accent);
         font-size: 11px;
-        letter-spacing: 0.11em;
+        font-weight: 900;
+        letter-spacing: .15em;
         text-transform: uppercase;
       }
-      .daily-digit-card p {
-        margin: 0;
-        color: var(--ink);
-        font-size: 14px;
-        line-height: 1.45;
+      .poll-panel h2 {
+        margin: 7px 42px 20px 0;
+        font-size: clamp(25px, 5vw, 34px);
+        line-height: 1.16;
       }
+      .poll-options { display: grid; gap: 10px; }
+      .poll-option {
+        position: relative;
+        width: 100%;
+        min-height: 51px;
+        overflow: hidden;
+        padding: 13px 15px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        text-align: left;
+        font: inherit;
+        font-weight: 750;
+        cursor: pointer;
+      }
+      .poll-option:hover:not(:disabled) { border-color: var(--accent); background: #fffaf4; }
+      .poll-option:disabled { cursor: default; }
+      .poll-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        background: #f4dfc5;
+        transition: width .65s cubic-bezier(.2,.8,.2,1);
+      }
+      .poll-option.selected .poll-fill { background: #edc58f; }
+      .poll-label { position: relative; z-index: 1; padding-right: 52px; }
+      .poll-percent {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        right: 14px;
+        transform: translateY(-50%);
+        font-weight: 900;
+      }
+      .poll-note { margin: 16px 0 0; color: var(--muted); font-size: 12px; }
       .button {
         display: inline-block;
         padding: 12px 20px;
@@ -237,6 +353,54 @@
         border: 1px solid #fff;
         margin: 16px 0 0 8px;
       }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 11px;
+      }
+      .hero-actions .hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 48px;
+        margin: 0;
+        padding: 11px 17px;
+        border-radius: 999px;
+        box-shadow: 0 5px 16px rgb(0 0 0 / 10%);
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      }
+      .hero-actions .hero-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgb(0 0 0 / 17%);
+      }
+      .hero-cta svg { width: 17px; height: 17px; stroke-width: 2.3; }
+      .hero-cta.primary-action {
+        background: linear-gradient(135deg, #111, #353535);
+        border: 1px solid #111;
+      }
+      .hero-cta .action-icon {
+        display: grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        transition: transform .25s ease;
+      }
+      .hero-cta:hover .action-icon { transform: rotate(-7deg) scale(1.08); }
+      .hero-cta.explore-action {
+        background: rgb(255 255 255 / 74%);
+        border-color: #bbb5aa;
+      }
+      .hero-cta.explore-action:hover { border-color: var(--accent); }
+      .hero-cta.catalogue-action {
+        background: linear-gradient(135deg, #fff7eb, #ffddb0);
+        border-color: #c46600;
+        color: #4a2600 !important;
+      }
+      .hero-cta.catalogue-action .action-icon { background: #111; }
       .hero {
         padding: 105px 0 90px;
         background: linear-gradient(115deg, #f7f6f2 60%, #ece9e1);
@@ -338,55 +502,6 @@
       .card p {
         margin: 0;
         color: var(--muted);
-      }
-      .capability-card {
-        position: relative;
-        isolation: isolate;
-        overflow: hidden;
-        display: flex;
-        min-height: 220px;
-        flex-direction: column;
-        justify-content: flex-end;
-        background: #151515;
-        border-color: #2c2c2c;
-      }
-      .capability-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -2;
-        background-image: var(--capability-image);
-        background-position: center;
-        background-size: cover;
-        filter: saturate(0.72) contrast(1.06);
-        opacity: 0.92;
-        transform: scale(1.035);
-        transition: opacity 0.45s ease, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-      }
-      .capability-card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background:
-          linear-gradient(0deg, rgba(8, 8, 8, 0.94) 0%, rgba(8, 8, 8, 0.68) 48%, rgba(8, 8, 8, 0.18) 100%),
-          linear-gradient(90deg, rgba(217, 119, 6, 0.12), transparent 62%);
-      }
-      .capability-card:hover::before {
-        opacity: 1;
-        transform: scale(1.085);
-      }
-      .capability-card h3,
-      .capability-card p {
-        position: relative;
-        max-width: 100%;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.72);
-      }
-      .capability-card h3 {
-        color: #fff;
-      }
-      .capability-card p {
-        color: #e1e3e6;
       }
       .product-card {
         padding: 0;
@@ -490,16 +605,8 @@
         font-size: 25px;
       }
       @media (max-width: 760px) {
-        nav {
-          gap: 12px;
-        }
-        .nav-actions {
-          margin-left: auto;
-          gap: 9px;
-        }
         .menu {
           display: block;
-          order: 2;
         }
         .links {
           display: none;
@@ -512,26 +619,13 @@
           flex-direction: column;
           border-bottom: 1px solid var(--line);
         }
-        .daily-digit-button {
-          min-width: 51px;
-          min-height: 44px;
-          padding: 6px 8px;
-          grid-template-areas: "label number";
-          column-gap: 5px;
-        }
-        .daily-digit-label {
-          max-width: 28px;
-          font-size: 7px;
-        }
-        .daily-digit-hint {
-          display: none;
-        }
-        .daily-digit-number {
-          font-size: 24px;
-        }
         .links.open {
           display: flex;
         }
+        .nav-tab { width: 100%; justify-content: center; }
+        .links .quote-tab { justify-content: center; }
+        .daily-digit { width: 100%; justify-content: center; }
+        .poll-panel { padding: 28px 20px 24px; }
         .hero {
           padding: 72px 0;
         }
@@ -550,6 +644,8 @@
         .button.alt {
           margin: 8px 4px 0 0;
         }
+        .hero-actions { align-items: stretch; flex-direction: column; }
+        .hero-actions .hero-cta { width: 100%; justify-content: center; margin: 0; }
         .button.outline-light {
           margin-left: 0;
         }
@@ -750,152 +846,6 @@
           margin: 8px 0 0;
         }
       }
-      /* Motion polish: restrained, fast and accessible. */
-      .hero {
-        position: relative;
-        overflow: hidden;
-        isolation: isolate;
-      }
-      .hero::after {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        width: 420px;
-        height: 420px;
-        right: max(-150px, calc((100vw - 1120px) / 2 - 180px));
-        top: 50%;
-        border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-        border-radius: 50%;
-        box-shadow:
-          0 0 0 75px color-mix(in srgb, var(--accent) 5%, transparent),
-          0 0 0 150px color-mix(in srgb, var(--accent) 3%, transparent);
-        transform: translateY(-50%);
-        animation: hero-orbit 9s ease-in-out infinite alternate;
-        pointer-events: none;
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background:
-          linear-gradient(90deg, transparent 49.8%, #d9770610 50%, transparent 50.2%),
-          linear-gradient(0deg, transparent 49.8%, #d977060b 50%, transparent 50.2%);
-        background-size: 72px 72px;
-        mask-image: linear-gradient(90deg, transparent 28%, #000 100%);
-        animation: grid-drift 16s linear infinite;
-        pointer-events: none;
-      }
-      .hero .eyebrow,
-      .hero h1,
-      .hero .lead,
-      .hero .button {
-        opacity: 0;
-        transform: translateY(18px);
-        animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-      .hero h1 { animation-delay: 0.08s; }
-      .hero .lead { animation-delay: 0.16s; }
-      .hero .button { animation-delay: 0.24s; }
-      .hero h1::after {
-        content: "";
-        display: block;
-        width: min(230px, 42vw);
-        height: 5px;
-        margin-top: 23px;
-        background: linear-gradient(90deg, var(--accent), #f6a329, transparent);
-        transform: scaleX(0);
-        transform-origin: left;
-        animation: line-draw 0.9s 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-      .reveal {
-        opacity: 0;
-        transform: translateY(38px) scale(0.985);
-        transition:
-          opacity 0.72s ease,
-          transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
-        transition-delay: var(--reveal-delay, 0ms);
-      }
-      .reveal.is-visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      .card,
-      .trust-item,
-      .range-card,
-      .stat,
-      .button {
-        transition:
-          transform 0.22s ease,
-          border-color 0.22s ease,
-          box-shadow 0.22s ease,
-          background-color 0.22s ease;
-      }
-      .card:hover,
-      .trust-item:hover,
-      .range-card:hover {
-        transform: translateY(-7px);
-        border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-        box-shadow: 0 18px 36px #1112, inset 0 3px 0 var(--accent);
-      }
-      .dark .card:hover,
-      .dark .range-card:hover {
-        box-shadow: 0 16px 32px #0005;
-      }
-      .button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 11px 22px #1113;
-      }
-      .product-card img { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-      .product-card:hover img { transform: scale(1.045); }
-      .stat strong,
-      .process .card::before {
-        transition: color 0.25s ease, transform 0.25s ease;
-      }
-      .stat:hover strong,
-      .process .card:hover::before {
-        color: var(--accent);
-        transform: translateX(5px);
-      }
-      .section-head .eyebrow {
-        position: relative;
-        display: inline-block;
-      }
-      .section-head .eyebrow::after {
-        content: "";
-        position: absolute;
-        left: calc(100% + 12px);
-        top: 50%;
-        width: 38px;
-        height: 1px;
-        background: var(--accent);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.55s 0.2s ease;
-      }
-      .section-head.is-visible .eyebrow::after { transform: scaleX(1); }
-      @keyframes hero-enter {
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes hero-orbit {
-        from { transform: translateY(-50%) rotate(-4deg) scale(0.96); }
-        to { transform: translateY(-50%) rotate(4deg) scale(1.04); }
-      }
-      @keyframes grid-drift {
-        to { background-position: 72px 72px; }
-      }
-      @keyframes line-draw {
-        to { transform: scaleX(1); }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        html { scroll-behavior: auto; }
-        *, *::before, *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-        .reveal { opacity: 1; transform: none; }
-      }
     </style>
   </head>
   <body>
@@ -907,28 +857,34 @@
             src="chill-che-logo.jpg"
             alt="Chill Che logo"
           /><span>CHILL CHE</span></a
-        ><div class="nav-actions">
-          <div class="links">
-            <a href="#capabilities">Capabilities</a
-            ><a href="#products">Products</a><a href="#quality">Quality</a
-            ><a href="#about">About</a
-            ><a class="button" href="#contact">Request a quote</a>
-          </div>
-          <div class="daily-digit" id="daily-digit">
-            <button class="daily-digit-button" type="button" aria-expanded="false" aria-controls="daily-digit-card" title="Discover today's engineering digit">
-              <span class="daily-digit-label">DAILY DIGIT</span>
-              <span class="daily-digit-hint">Tap for a fact</span>
-              <span class="daily-digit-number" aria-live="polite">–</span>
-            </button>
-            <div class="daily-digit-card" id="daily-digit-card" role="region" aria-label="Daily engineering fact">
-              <strong>Today’s engineering fact</strong>
-              <p></p>
-            </div>
-          </div>
-          <button class="menu" aria-label="Open menu">☰</button>
+        ><button class="menu" aria-label="Open menu">☰</button>
+        <div class="links">
+          <a class="nav-tab" href="#capabilities"><span class="nav-icon"><i data-lucide="wrench"></i></span>Capabilities</a
+          ><a class="nav-tab" href="#products"><span class="nav-icon"><i data-lucide="package-search"></i></span>Products</a><a class="nav-tab" href="#quality"><span class="nav-icon"><i data-lucide="badge-check"></i></span>Quality</a
+          ><a class="nav-tab" href="#about"><span class="nav-icon"><i data-lucide="circle-user-round"></i></span>About</a
+          ><button class="daily-digit" id="daily-digit" type="button" aria-haspopup="dialog" aria-label="Open today's Daily Digit engineering poll">
+            Daily Digit <span class="poll-tease">LIVE POLL</span> <strong id="nav-digit">–</strong>
+          </button
+          ><a class="button quote-tab" href="#contact">Request a quote <span class="quote-arrow">→</span></a>
         </div>
       </nav>
     </header>
+    <div class="poll-overlay" id="poll-overlay" role="dialog" aria-modal="true" aria-labelledby="poll-question">
+      <div class="poll-panel">
+        <button class="poll-close" id="poll-close" type="button" aria-label="Close">×</button>
+        <div class="digit-display">
+          <strong id="modal-digit">–</strong>
+          <div>
+            <div class="poll-kicker">Your Daily Digit</div>
+            <p id="digit-message"></p>
+          </div>
+        </div>
+        <div class="poll-kicker">Today’s completely scientific engineering question</div>
+        <h2 id="poll-question"></h2>
+        <div class="poll-options" id="poll-options"></div>
+        <p class="poll-note" id="poll-note">Choose wisely. Engineering history may remember this.</p>
+      </div>
+    </div>
     <main>
       <section class="hero">
         <div class="wrap">
@@ -939,14 +895,16 @@
             India—combining capable manufacturing partners, responsive project
             coordination and quality documentation.
           </p>
-          <a class="button" href="#contact">Send your drawing</a
-          ><a class="button alt" href="#capabilities">Explore capabilities</a
+          <div class="hero-actions">
+          <a class="button hero-cta primary-action" href="#contact"><span class="action-icon"><i data-lucide="send"></i></span>Send your drawing</a
+          ><a class="button alt hero-cta explore-action" href="#capabilities"><span class="action-icon"><i data-lucide="scan-search"></i></span>Explore capabilities</a
           ><a
-            class="button alt"
+            class="button alt hero-cta catalogue-action"
             href="chill-che-company-catalogue.pdf"
             target="_blank"
-            >Download catalogue</a
+            ><span class="action-icon"><i data-lucide="download"></i></span>Download catalogue</a
           >
+          </div>
         </div>
       </section>
       <div class="wrap stats">
@@ -1006,41 +964,41 @@
             </p>
           </div>
           <div class="grid">
-            <article class="card capability-card" style="--capability-image: url('capability-images/cnc-machining.webp')">
+            <article class="card">
               <h3>CNC Machining</h3>
               <p>
                 Precision turning, milling, grinding and complex made-to-print
                 components.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('capability-images/reverse-engineering.webp')">
+            <article class="card">
               <h3>Reverse Engineering</h3>
               <p>
                 Component study, measurement support and practical manufacturing
                 development.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('capability-images/fabrication.webp')">
+            <article class="card">
               <h3>Fabrication</h3>
               <p>
                 Custom industrial assemblies, trolleys and fabricated equipment.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('capability-images/design-support.webp')">
+            <article class="card">
               <h3>Design Support</h3>
               <p>
                 Manufacturability input and coordination from requirement
                 through realization.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('capability-images/industrial-sourcing.webp')">
+            <article class="card">
               <h3>Industrial Sourcing</h3>
               <p>
                 A focused supply partner for specialized materials and
                 engineered products.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('capability-images/vendor-development.webp')">
+            <article class="card">
               <h3>Vendor Development</h3>
               <p>
                 Capability matching, follow-up and quality coordination across
@@ -1517,107 +1475,6 @@
         .querySelectorAll(".links a")
         .forEach((a) => (a.onclick = () => l.classList.remove("open")));
       document.getElementById("year").textContent = new Date().getFullYear();
-      const revealItems = document.querySelectorAll(
-        ".section-head, .stat, .trust-item, .card, .range-card, .range-cta, .rfq-form"
-      );
-      revealItems.forEach((item, index) => {
-        item.classList.add("reveal");
-        item.style.setProperty("--reveal-delay", `${(index % 3) * 70}ms`);
-      });
-      const revealObserver = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          });
-        },
-        { threshold: 0.12, rootMargin: "0px 0px -45px" }
-      );
-      revealItems.forEach((item) => revealObserver.observe(item));
-      const engineeringFacts = [
-        "Helical gears run more quietly than spur gears because their teeth engage gradually.",
-        "A fillet reduces stress concentration by smoothing the transition between two surfaces.",
-        "Bearings reduce friction by replacing sliding contact with rolling contact.",
-        "Heat treatment can change a metal’s hardness without changing its basic shape.",
-        "Surface finish can strongly influence friction, sealing and fatigue life.",
-        "Tolerances define acceptable variation—not a single perfectly exact dimension.",
-        "Shot peening can improve fatigue life by creating compressive stress at a surface.",
-        "A keyway transfers torque but also creates a local stress concentration.",
-        "Hard chrome plating can improve wear resistance and restore a shaft’s working diameter.",
-        "Nitriding hardens a steel surface while generally causing less distortion than quench hardening.",
-        "A datum gives measurements a consistent reference for inspection and assembly.",
-        "Runout combines the effects of roundness, straightness and alignment during rotation.",
-        "Backlash gives mating gear teeth the clearance needed for lubrication and thermal expansion.",
-        "Lubrication separates moving surfaces and helps carry away heat and wear particles.",
-        "Stainless steel resists corrosion because chromium forms a thin passive oxide layer.",
-        "Forging usually improves grain flow compared with machining the same shape from plate.",
-        "Grinding can achieve tighter tolerances and finer finishes than conventional turning.",
-        "Ultrasonic testing uses high-frequency sound waves to detect internal discontinuities.",
-        "Magnetic-particle testing reveals surface and near-surface flaws in ferromagnetic materials.",
-        "Dye-penetrant testing can reveal surface-breaking flaws in many nonporous materials.",
-        "A chamfer removes a sharp edge and can make assembly easier.",
-        "Preload can increase the stiffness and positional accuracy of a bearing arrangement.",
-        "Thermal expansion must be considered when precision assemblies operate across changing temperatures.",
-        "A larger shaft diameter can greatly increase torsional stiffness because diameter has a fourth-power effect.",
-        "Engineering fits control whether mating parts slide freely, locate accurately or lock together.",
-        "Residual stress can remain in a component even when no external load is applied.",
-        "Annealing can soften metal, relieve stress and improve machinability.",
-        "Case hardening combines a wear-resistant surface with a tougher core.",
-        "CNC repeatability describes how closely a machine returns to the same commanded position.",
-        "A surface may look smooth but still require measurement to verify its roughness.",
-        "Gears transmit torque by controlled rolling and sliding contact between shaped teeth.",
-        "A spline can transmit torque while allowing axial movement between connected parts.",
-        "The neutral axis of a bent beam experiences zero longitudinal bending stress.",
-        "Corrosion allowance adds material so a component can lose thickness without losing function.",
-        "Traceability links a finished component back to its material, process and inspection records.",
-        "A go/no-go gauge checks whether a feature stays within its permitted size limits.",
-        "Torque is a turning effect equal to force multiplied by perpendicular distance.",
-        "A flywheel stores rotational energy and helps smooth speed fluctuations.",
-        "Interference fits rely on elastic deformation to hold assembled parts together.",
-        "Designing for manufacturability can reduce cost before the first component is produced.",
-        "A washer spreads a fastener’s load over a larger contact area.",
-        "Fatigue cracks can grow under repeated loads that are below a material’s static strength.",
-        "Balance becomes increasingly important as a rotating component’s operating speed rises.",
-        "A radius at a shaft shoulder can improve fatigue strength when the mating part allows clearance.",
-        "Inspection records turn a manufactured dimension into documented, reviewable evidence."
-      ];
-      const dailyDigit = document.getElementById("daily-digit");
-      const dailyButton = dailyDigit.querySelector("button");
-      const dailyNumber = dailyDigit.querySelector(".daily-digit-number");
-      const dailyFact = dailyDigit.querySelector(".daily-digit-card p");
-      const indiaDate = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Asia/Kolkata",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(new Date());
-      const seededHash = (value) => {
-        let hash = 2166136261;
-        for (let i = 0; i < value.length; i++) {
-          hash ^= value.charCodeAt(i);
-          hash = Math.imul(hash, 16777619);
-        }
-        return hash >>> 0;
-      };
-      dailyNumber.textContent = (seededHash(`chill-che-digit-${indiaDate}`) % 9) + 1;
-      dailyFact.textContent = engineeringFacts[seededHash(`chill-che-fact-${indiaDate}`) % engineeringFacts.length];
-      requestAnimationFrame(() => dailyDigit.classList.add("ready"));
-      const closeDailyDigit = () => {
-        dailyDigit.classList.remove("open");
-        dailyButton.setAttribute("aria-expanded", "false");
-      };
-      dailyButton.addEventListener("click", () => {
-        const willOpen = !dailyDigit.classList.contains("open");
-        dailyDigit.classList.toggle("open", willOpen);
-        dailyButton.setAttribute("aria-expanded", String(willOpen));
-      });
-      document.addEventListener("click", (event) => {
-        if (!dailyDigit.contains(event.target)) closeDailyDigit();
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeDailyDigit();
-      });
       const submitted =
         new URLSearchParams(location.search).get("submitted") === "true";
       if (submitted) {
@@ -1647,6 +1504,164 @@
           }, 1500);
         } else if (href.startsWith("mailto:")) gtag("event", "email_click");
       });
+
+      /* Daily Digit + Engineering Nonsense Poll
+         Each poll has a permanent ID, so its historical result is reused whenever it returns. */
+      const pollBank = [
+        ["urgent-drawing", "A drawing arrives marked ‘URGENT.’ What does it actually mean?", ["Production forgot to order it", "Customer needed it yesterday", "Dimensions will change tomorrow", "Please quote before reading"]],
+        ["oversize-response", "A component is 0.02 mm oversize. What’s the official response?", ["Temperature variation", "Measure it with another instrument", "Send it to Quality", "Politely stare at the drawing"]],
+        ["terrifying-sound", "Which sound is most terrifying in a machine shop?", ["Unexpected silence", "Ting… ting… CLANK", "The inspector saying ‘interesting’", "The customer calling during inspection"]],
+        ["final-authority", "Who has the final authority over engineering decisions?", ["The design engineer", "The production manager", "The quality inspector", "The component itself"]],
+        ["drawing-typical", "The drawing says ‘typical.’ How seriously should we take it?", ["Extremely seriously", "Spiritually seriously", "Only during inspection", "Ask three engineers, get five answers"]],
+        ["shaft-not-fitting", "A shaft is not fitting. What should be checked first?", ["Diameter", "Alignment", "Drawing revision", "Whether someone already used a hammer"]],
+        ["missing-spanner", "What is the natural habitat of a missing 10 mm spanner?", ["Another toolbox", "Under the machine", "Someone’s pocket", "Beyond human understanding"]],
+        ["urgent-followups", "How many follow-ups make a quotation officially ‘urgent’?", ["1", "3", "7", "One call from the director"]],
+        ["best-price-unit", "The customer requests ‘best price.’ Which unit measures it?", ["₹ per piece", "₹ per kg", "Friendship", "Previous supplier’s regret"]],
+        ["minor-revision", "What does ‘minor drawing revision’ usually involve?", ["One corrected dimension", "A completely different material", "Eleven new tolerances", "Starting again with confidence"]],
+        ["strongest-material", "Which material is strongest?", ["Tool steel", "Titanium", "Inconel", "The customer’s delivery expectation"]],
+        ["acceptable-report", "The inspection report says ‘acceptable.’ How do you celebrate?", ["Quietly", "With tea", "By checking the report again", "You don’t—dispatch is still pending"]],
+        ["universal-tool", "What is the most universal engineering tool?", ["Vernier caliper", "Torque wrench", "Calculator", "The suspiciously nearby hammer"]],
+        ["meeting-duration", "How long should a five-minute technical discussion last?", ["Five minutes", "Half an hour", "Until lunch", "Until somebody opens the drawing"]],
+        ["revision-zero", "What does Revision 0 really mean?", ["Approved for production", "Almost final", "The adventure begins", "Save a copy before opening"]],
+        ["machine-mood", "How do you know a machine is in a bad mood?", ["It vibrates", "It runs hot", "It behaves perfectly when maintenance arrives", "It rejects only expensive parts"]],
+        ["tolerance-philosophy", "A tolerance has three decimal places. What is it asking for?", ["Precision", "Patience", "A better measuring instrument", "An emotional support engineer"]],
+        ["trial-assembly", "What does ‘trial assembly’ translate to on the shop floor?", ["Careful verification", "Temporary confidence", "Finding what the drawing forgot", "Hammer—but academically"]],
+        ["email-attached", "An email says ‘please find attached,’ but nothing is attached. What was attached?", ["The drawing", "The quotation", "Good intentions", "Tomorrow’s follow-up"]],
+        ["delivery-promise", "Which delivery commitment is the safest?", ["Two weeks", "Ten working days", "As soon as possible", "Before the customer asks again"]],
+        ["flatness-check", "What is the fastest unofficial flatness test?", ["Surface plate", "Dial indicator", "Hold it against the light", "Place it on the manager’s desk"]],
+        ["quality-arrival", "Why does the defect appear only when Quality arrives?", ["Lighting conditions", "Statistical probability", "Inspector magnetism", "The part knows"]],
+        ["cnc-program", "The CNC program worked yesterday. Why not today?", ["Tool wear", "Offset changed", "Material variation", "It sensed overconfidence"]],
+        ["one-small-change", "The customer says ‘just one small change.’ What should you prepare?", ["A pencil", "A new quotation", "A new process plan", "A new personality"]],
+        ["zero-zero", "What lives between 0.00 and 0.01 mm?", ["Nothing", "Surface finish", "Inspection arguments", "An entire quality department"]],
+        ["drawing-coffee", "What is the recommended beverage for reading a 14-page drawing?", ["Tea", "Coffee", "Something stronger", "Whatever survives Revision B"]],
+        ["dispatch-ritual", "Which ritual most improves the chance of an on-time dispatch?", ["Daily planning", "Production meeting", "Calling the transporter early", "Not mentioning the dispatch aloud"]],
+        ["mystery-scratch", "A mysterious scratch appears after final inspection. Who made it?", ["Handling", "Packaging", "The night shift", "No one in recorded history"]],
+        ["machine-manual", "When is the machine manual normally opened?", ["Before installation", "During training", "After the third alarm", "When YouTube has failed"]],
+        ["approved-vendor", "What is the hardest material to obtain?", ["Inconel", "Titanium", "Certified tool steel", "A new approved vendor"]],
+        ["caliper-battery", "When does a digital caliper battery die?", ["During calibration", "During production", "During customer inspection", "Exactly when the spare disappears"]],
+        ["quote-validity", "A quotation is valid for 30 days. When will the customer respond?", ["Today", "Next week", "Day 29", "Day 31 with an urgent PO"]],
+        ["inspection-light", "Under which lighting is every component perfect?", ["Daylight", "White light", "Low light", "Before the inspector removes the packaging"]],
+        ["drawing-note", "Which drawing note contains the greatest hidden danger?", ["Deburr all edges", "As per sample", "To suit at site", "All dimensions are critical"]],
+        ["production-percentage", "A job is ‘90% complete.’ How much work remains?", ["10%", "25%", "Half", "All the difficult parts"]],
+        ["vendor-reply", "What does ‘we are checking’ mean in supplier language?", ["Engineering is checking", "Production is checking", "Nobody has checked", "The person who knows is on leave"]],
+        ["heat-treatment", "The part returned from heat treatment looking different. What changed?", ["Hardness", "Dimensions", "Colour", "Everyone’s confidence"]],
+        ["packing-standard", "What is the true purpose of industrial packaging?", ["Prevent corrosion", "Prevent damage", "Survive transport", "Defeat the person trying to open it"]],
+        ["phone-photo", "A customer sends a blurry component photo. What dimension can be confirmed?", ["Outer diameter", "Length", "Surface finish", "The urgency level"]],
+        ["five-minutes", "When production says ‘give us five minutes,’ what unit are they using?", ["Seconds", "Minutes", "Working hours", "Geological time"]],
+        ["perfect-drawing", "Where can a perfectly complete engineering drawing be found?", ["The server", "The archive", "The customer’s office", "Engineering mythology"]],
+        ["inspection-sample", "Which component will the inspector select from a batch?", ["The first", "A random one", "The best-looking one", "The only suspicious one"]],
+        ["supplier-magic", "What is the first law of supplier magic?", ["Cost, quality and delivery", "Anything is possible", "Everything needs a drawing", "Urgency cannot create raw material"]],
+        ["assembly-leftover", "One washer remains after assembly. What does it represent?", ["A spare", "Improved efficiency", "A drawing discrepancy", "A future investigation"]],
+        ["tool-life", "How long does a cutting tool last?", ["As per catalogue", "Until the wear limit", "Until the last piece", "One component less than required"]],
+        ["meeting-caliper", "Should a vernier caliper be allowed into a price negotiation?", ["Yes, for accuracy", "Only if calibrated", "No, it measures uncomfortable truths", "Only with management approval"]],
+        ["surface-finish", "The finish symbol looks expensive. What should we do?", ["Polish it", "Grind it", "Ask its purpose", "Quote bravely and worry later"]],
+        ["material-certificate", "When does everyone ask for the material certificate?", ["Before machining", "During inspection", "After dispatch", "When nobody remembers where it is"]]
+      ];
+
+      const digitMessages = [
+        "Today favours careful measurements and suspiciously strong tea.",
+        "A respectable number. Do not waste it on an unapproved revision.",
+        "Good for quotations, tolerances and pretending the delivery is under control.",
+        "Statistically powerful. Technically unverified.",
+        "Your machines may cooperate today. No warranty is expressed or implied.",
+        "A high-performance digit for low-tolerance situations.",
+        "Use responsibly around inspectors and rotating equipment.",
+        "Excellent luck—subject to final dimensional inspection.",
+        "Today’s number has passed visual inspection. Documentation pending."
+      ];
+
+      const pollStoreKey = "chillche-poll-history-v1";
+      const voteStoreKey = "chillche-poll-votes-v1";
+      const dateKey = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(new Date());
+      function stableHash(text) {
+        let h = 2166136261;
+        for (let i = 0; i < text.length; i++) {
+          h ^= text.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+      const dailyDigit = (stableHash("digit:" + dateKey) % 9) + 1;
+      const activePoll = pollBank[stableHash("poll:" + dateKey) % pollBank.length];
+      const pollId = activePoll[0];
+      const question = activePoll[1];
+      const answers = activePoll[2];
+      const history = JSON.parse(localStorage.getItem(pollStoreKey) || "{}");
+      const voted = JSON.parse(localStorage.getItem(voteStoreKey) || "{}");
+      const counts = Array.isArray(history[pollId]) ? history[pollId] : answers.map(() => 0);
+      const overlay = document.getElementById("poll-overlay");
+      const optionsBox = document.getElementById("poll-options");
+      document.getElementById("nav-digit").textContent = dailyDigit;
+      document.getElementById("modal-digit").textContent = dailyDigit;
+      document.getElementById("digit-message").textContent = digitMessages[dailyDigit - 1];
+      document.getElementById("poll-question").textContent = question;
+
+      function percentages(values) {
+        const total = values.reduce((sum, n) => sum + n, 0);
+        if (!total) return values.map(() => 0);
+        const raw = values.map((n) => (n * 100) / total);
+        const whole = raw.map(Math.floor);
+        let remainder = 100 - whole.reduce((sum, n) => sum + n, 0);
+        raw.map((n, i) => [n - whole[i], i]).sort((a, b) => b[0] - a[0])
+          .slice(0, remainder).forEach(([, i]) => whole[i]++);
+        return whole;
+      }
+      function renderPoll(showResults) {
+        const pct = percentages(counts);
+        optionsBox.innerHTML = "";
+        answers.forEach((answer, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "poll-option" + (voted[pollId] === index ? " selected" : "");
+          button.disabled = showResults;
+          const fill = document.createElement("span");
+          fill.className = "poll-fill";
+          const label = document.createElement("span");
+          label.className = "poll-label";
+          label.textContent = answer;
+          button.append(fill, label);
+          if (showResults) {
+            const result = document.createElement("span");
+            result.className = "poll-percent";
+            result.textContent = pct[index] + "%";
+            button.append(result);
+            requestAnimationFrame(() => { fill.style.width = pct[index] + "%"; });
+          } else {
+            button.addEventListener("click", () => castVote(index));
+          }
+          optionsBox.append(button);
+        });
+        document.getElementById("poll-note").textContent = showResults
+          ? "Results saved for the next time this question returns."
+          : "Choose wisely. Engineering history may remember this.";
+      }
+      function castVote(index) {
+        if (Object.prototype.hasOwnProperty.call(voted, pollId)) return;
+        counts[index]++;
+        history[pollId] = counts;
+        voted[pollId] = index;
+        localStorage.setItem(pollStoreKey, JSON.stringify(history));
+        localStorage.setItem(voteStoreKey, JSON.stringify(voted));
+        renderPoll(true);
+        if (typeof gtag === "function") gtag("event", "daily_poll_vote", { poll_id: pollId, option_index: index });
+      }
+      function openPoll() {
+        renderPoll(Object.prototype.hasOwnProperty.call(voted, pollId));
+        overlay.classList.add("open");
+        document.body.style.overflow = "hidden";
+        document.getElementById("poll-close").focus();
+      }
+      function closePoll() {
+        overlay.classList.remove("open");
+        document.body.style.overflow = "";
+        document.getElementById("daily-digit").focus();
+      }
+      document.getElementById("daily-digit").addEventListener("click", openPoll);
+      document.getElementById("poll-close").addEventListener("click", closePoll);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) closePoll(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && overlay.classList.contains("open")) closePoll(); });
     </script>
   </body>
 </html>
