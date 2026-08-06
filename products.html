@@ -415,6 +415,13 @@ nav.wrap { gap: 22px; }
   .v3-nav .quote-tab { margin:6px 0 0; justify-content:center; }
 }
 
+
+/* Always-visible Daily Quiz navigation tab */
+.daily-quiz-tab{border:1px solid rgba(239,127,26,.34);background:#fff8ef;color:#a85400;cursor:pointer;white-space:nowrap}
+.daily-quiz-tab:hover{background:#ffead0;color:#7d3d00}
+.daily-quiz-tab svg{width:15px;height:15px;stroke-width:2.3}
+@media (max-width:1180px) and (min-width:821px){.daily-quiz-tab span{font-size:0}.daily-quiz-tab span::after{content:'Quiz';font-size:12px}}
+@media (max-width:820px){.daily-quiz-tab span{font-size:14px}.daily-quiz-tab span::after{content:''}}
 </style>
   </head>
   <body>
@@ -452,9 +459,9 @@ nav.wrap { gap: 22px; }
               <button class="nav-label" type="button">Resources <i class="chevron" data-lucide="chevron-down"></i></button>
               <div class="dropdown">
                 <a href="chill-che-company-catalogue.pdf"><i class="drop-icon" data-lucide="download"></i><span>Company catalogue</span></a>
-                <a href="index.html?poll=open"><i class="drop-icon" data-lucide="sparkles"></i><span>Daily Digit & Quiz</span></a>
-              </div>
+</div>
             </div>
+            <a class="nav-tab daily-quiz-tab" href="index.html?poll=open" aria-label="Open Daily Digit and Engineering Quiz"><i data-lucide="sparkles"></i><span>Daily Quiz</span></a>
             <a class="nav-tab" href="index.html#about">About</a>
             <a class="nav-tab" href="index.html#contact">Contact</a>
             <a class="button quote-tab" href="index.html#contact">Request a quote <span class="quote-arrow">→</span></a>
