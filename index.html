@@ -340,6 +340,18 @@
         transition: width .65s cubic-bezier(.2,.8,.2,1);
       }
       .poll-option.selected .poll-fill { background: #edc58f; }
+      .poll-option.correct { border-color: #2f855a; background: #f0fff4; }
+      .poll-option.correct .poll-fill { background: #b7e4c7; }
+      .poll-option.incorrect { border-color: #c53030; background: #fff5f5; }
+      .poll-option.incorrect .poll-fill { background: #fed7d7; }
+      .poll-option.correct .poll-label::after { content: "  ✓"; color: #2f855a; font-weight: 900; }
+      .poll-option.incorrect .poll-label::after { content: "  ✕"; color: #c53030; font-weight: 900; }
+      .quiz-feedback { display: none; margin-top: 15px; padding: 14px 16px; border-radius: 12px; background: #f7f7f5; border: 1px solid #deded8; font-size: 14px; line-height: 1.55; }
+      .quiz-feedback.show { display: block; }
+      .quiz-feedback strong { display: block; margin-bottom: 4px; font-size: 16px; }
+      .quiz-feedback.correct-feedback strong { color: #2f855a; }
+      .quiz-feedback.incorrect-feedback strong { color: #c53030; }
+
       .poll-label { position: relative; z-index: 1; padding-right: 52px; }
       .poll-percent {
         position: absolute;
@@ -1112,8 +1124,8 @@
           ><a class="nav-tab" href="#products"><span class="nav-icon"><i data-lucide="package-search"></i></span>Products</a><a class="nav-tab" href="#quality"><span class="nav-icon"><i data-lucide="badge-check"></i></span>Quality</a
           ><a class="nav-tab" href="#partnerships"><span class="nav-icon"><i data-lucide="handshake"></i></span>India Partnerships</a
           ><a class="nav-tab" href="#about"><span class="nav-icon"><i data-lucide="circle-user-round"></i></span>About</a
-          ><button class="daily-digit" id="daily-digit" type="button" aria-haspopup="dialog" aria-label="Open today's Daily Digit engineering poll">
-            Daily Digit <span class="poll-tease">LIVE POLL</span> <strong id="nav-digit">–</strong>
+          ><button class="daily-digit" id="daily-digit" type="button" aria-haspopup="dialog" aria-label="Open today's Daily Engineering Quiz">
+            🎲 Daily Digit <span class="poll-tease">NEW TODAY</span> <strong id="nav-digit">–</strong>
           </button
           ><a class="button quote-tab" href="#contact">Request a quote <span class="quote-arrow">→</span></a>
         </div>
@@ -1125,19 +1137,16 @@
         <div class="digit-display">
           <strong id="modal-digit">–</strong>
           <div>
-            <div class="poll-kicker">Your Daily Digit</div>
-            <p id="digit-message"></p>
+            <div class="poll-kicker">🎲 Daily Digit</div>
+            <p>Today’s lucky engineering number.<br><small>(Just for fun. 😄)</small></p>
           </div>
         </div>
-        <p class="digit-explainer">Every day, we post a number from 1 to 9—just for fun. Because why not?</p>
-        <div class="daily-fact-block">
-          <strong>Today’s engineering fact</strong>
-          <p id="daily-fact"></p>
-        </div>
-        <div class="poll-kicker">Today’s completely scientific engineering question</div>
+        <p class="digit-explainer">Every day, we post a number from 1 to 9—just for fun.</p>
+        <div class="poll-kicker">🎯 Daily Engineering Quiz</div>
         <h2 id="poll-question"></h2>
         <div class="poll-options" id="poll-options"></div>
-        <p class="poll-note" id="poll-note">Choose wisely. Engineering history may remember this.</p>
+        <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+        <p class="poll-note" id="poll-note">Choose an answer to test your engineering knowledge.</p>
       </div>
     </div>
     <main>
@@ -1863,57 +1872,39 @@
         } else if (href.startsWith("mailto:")) gtag("event", "email_click");
       });
 
-      /* Daily Digit + Engineering Nonsense Poll
-         Each poll has a permanent ID, so its historical result is reused whenever it returns. */
-      const pollBank = [
-        ["urgent-drawing", "A drawing arrives marked ‘URGENT.’ What does it actually mean?", ["Production forgot to order it", "Customer needed it yesterday", "Dimensions will change tomorrow", "Please quote before reading"]],
-        ["oversize-response", "A component is 0.02 mm oversize. What’s the official response?", ["Temperature variation", "Measure it with another instrument", "Send it to Quality", "Politely stare at the drawing"]],
-        ["terrifying-sound", "Which sound is most terrifying in a machine shop?", ["Unexpected silence", "Ting… ting… CLANK", "The inspector saying ‘interesting’", "The customer calling during inspection"]],
-        ["final-authority", "Who has the final authority over engineering decisions?", ["The design engineer", "The production manager", "The quality inspector", "The component itself"]],
-        ["drawing-typical", "The drawing says ‘typical.’ How seriously should we take it?", ["Extremely seriously", "Spiritually seriously", "Only during inspection", "Ask three engineers, get five answers"]],
-        ["shaft-not-fitting", "A shaft is not fitting. What should be checked first?", ["Diameter", "Alignment", "Drawing revision", "Whether someone already used a hammer"]],
-        ["missing-spanner", "What is the natural habitat of a missing 10 mm spanner?", ["Another toolbox", "Under the machine", "Someone’s pocket", "Beyond human understanding"]],
-        ["urgent-followups", "How many follow-ups make a quotation officially ‘urgent’?", ["1", "3", "7", "One call from the director"]],
-        ["best-price-unit", "The customer requests ‘best price.’ Which unit measures it?", ["₹ per piece", "₹ per kg", "Friendship", "Previous supplier’s regret"]],
-        ["minor-revision", "What does ‘minor drawing revision’ usually involve?", ["One corrected dimension", "A completely different material", "Eleven new tolerances", "Starting again with confidence"]],
-        ["strongest-material", "Which material is strongest?", ["Tool steel", "Titanium", "Inconel", "The customer’s delivery expectation"]],
-        ["acceptable-report", "The inspection report says ‘acceptable.’ How do you celebrate?", ["Quietly", "With tea", "By checking the report again", "You don’t—dispatch is still pending"]],
-        ["universal-tool", "What is the most universal engineering tool?", ["Vernier caliper", "Torque wrench", "Calculator", "The suspiciously nearby hammer"]],
-        ["meeting-duration", "How long should a five-minute technical discussion last?", ["Five minutes", "Half an hour", "Until lunch", "Until somebody opens the drawing"]],
-        ["revision-zero", "What does Revision 0 really mean?", ["Approved for production", "Almost final", "The adventure begins", "Save a copy before opening"]],
-        ["machine-mood", "How do you know a machine is in a bad mood?", ["It vibrates", "It runs hot", "It behaves perfectly when maintenance arrives", "It rejects only expensive parts"]],
-        ["tolerance-philosophy", "A tolerance has three decimal places. What is it asking for?", ["Precision", "Patience", "A better measuring instrument", "An emotional support engineer"]],
-        ["trial-assembly", "What does ‘trial assembly’ translate to on the shop floor?", ["Careful verification", "Temporary confidence", "Finding what the drawing forgot", "Hammer—but academically"]],
-        ["email-attached", "An email says ‘please find attached,’ but nothing is attached. What was attached?", ["The drawing", "The quotation", "Good intentions", "Tomorrow’s follow-up"]],
-        ["delivery-promise", "Which delivery commitment is the safest?", ["Two weeks", "Ten working days", "As soon as possible", "Before the customer asks again"]],
-        ["flatness-check", "What is the fastest unofficial flatness test?", ["Surface plate", "Dial indicator", "Hold it against the light", "Place it on the manager’s desk"]],
-        ["quality-arrival", "Why does the defect appear only when Quality arrives?", ["Lighting conditions", "Statistical probability", "Inspector magnetism", "The part knows"]],
-        ["cnc-program", "The CNC program worked yesterday. Why not today?", ["Tool wear", "Offset changed", "Material variation", "It sensed overconfidence"]],
-        ["one-small-change", "The customer says ‘just one small change.’ What should you prepare?", ["A pencil", "A new quotation", "A new process plan", "A new personality"]],
-        ["zero-zero", "What lives between 0.00 and 0.01 mm?", ["Nothing", "Surface finish", "Inspection arguments", "An entire quality department"]],
-        ["drawing-coffee", "What is the recommended beverage for reading a 14-page drawing?", ["Tea", "Coffee", "Something stronger", "Whatever survives Revision B"]],
-        ["dispatch-ritual", "Which ritual most improves the chance of an on-time dispatch?", ["Daily planning", "Production meeting", "Calling the transporter early", "Not mentioning the dispatch aloud"]],
-        ["mystery-scratch", "A mysterious scratch appears after final inspection. Who made it?", ["Handling", "Packaging", "The night shift", "No one in recorded history"]],
-        ["machine-manual", "When is the machine manual normally opened?", ["Before installation", "During training", "After the third alarm", "When YouTube has failed"]],
-        ["approved-vendor", "What is the hardest material to obtain?", ["Inconel", "Titanium", "Certified tool steel", "A new approved vendor"]],
-        ["caliper-battery", "When does a digital caliper battery die?", ["During calibration", "During production", "During customer inspection", "Exactly when the spare disappears"]],
-        ["quote-validity", "A quotation is valid for 30 days. When will the customer respond?", ["Today", "Next week", "Day 29", "Day 31 with an urgent PO"]],
-        ["inspection-light", "Under which lighting is every component perfect?", ["Daylight", "White light", "Low light", "Before the inspector removes the packaging"]],
-        ["drawing-note", "Which drawing note contains the greatest hidden danger?", ["Deburr all edges", "As per sample", "To suit at site", "All dimensions are critical"]],
-        ["production-percentage", "A job is ‘90% complete.’ How much work remains?", ["10%", "25%", "Half", "All the difficult parts"]],
-        ["vendor-reply", "What does ‘we are checking’ mean in supplier language?", ["Engineering is checking", "Production is checking", "Nobody has checked", "The person who knows is on leave"]],
-        ["heat-treatment", "The part returned from heat treatment looking different. What changed?", ["Hardness", "Dimensions", "Colour", "Everyone’s confidence"]],
-        ["packing-standard", "What is the true purpose of industrial packaging?", ["Prevent corrosion", "Prevent damage", "Survive transport", "Defeat the person trying to open it"]],
-        ["phone-photo", "A customer sends a blurry component photo. What dimension can be confirmed?", ["Outer diameter", "Length", "Surface finish", "The urgency level"]],
-        ["five-minutes", "When production says ‘give us five minutes,’ what unit are they using?", ["Seconds", "Minutes", "Working hours", "Geological time"]],
-        ["perfect-drawing", "Where can a perfectly complete engineering drawing be found?", ["The server", "The archive", "The customer’s office", "Engineering mythology"]],
-        ["inspection-sample", "Which component will the inspector select from a batch?", ["The first", "A random one", "The best-looking one", "The only suspicious one"]],
-        ["supplier-magic", "What is the first law of supplier magic?", ["Cost, quality and delivery", "Anything is possible", "Everything needs a drawing", "Urgency cannot create raw material"]],
-        ["assembly-leftover", "One washer remains after assembly. What does it represent?", ["A spare", "Improved efficiency", "A drawing discrepancy", "A future investigation"]],
-        ["tool-life", "How long does a cutting tool last?", ["As per catalogue", "Until the wear limit", "Until the last piece", "One component less than required"]],
-        ["meeting-caliper", "Should a vernier caliper be allowed into a price negotiation?", ["Yes, for accuracy", "Only if calibrated", "No, it measures uncomfortable truths", "Only with management approval"]],
-        ["surface-finish", "The finish symbol looks expensive. What should we do?", ["Polish it", "Grind it", "Ask its purpose", "Quote bravely and worry later"]],
-        ["material-certificate", "When does everyone ask for the material certificate?", ["Before machining", "During inspection", "After dispatch", "When nobody remembers where it is"]]
+      /* Daily Digit + Daily Engineering Quiz
+         Each quiz has a permanent ID, so shared results are reused whenever it returns. */
+      const quizBank = [
+        ["round-shaft", "Which machine is commonly used to make a round shaft?", ["Turning", "Milling", "Welding", "Grinding"], 0, "Turning is one of the most common machining operations for producing shafts, rollers, pins and cylindrical components. Many precision shafts supplied through Chill Che begin with CNC turning before heat treatment and finish grinding."],
+        ["bearing-purpose", "What is the main purpose of a bearing?", ["Reduce friction", "Increase weight", "Change colour", "Create heat"], 0, "Bearings support moving parts and help reduce friction between rotating or sliding surfaces."],
+        ["accurate-diameter", "Which tool is commonly used to measure a shaft diameter accurately?", ["Micrometer", "Hammer", "Spanner", "Paint brush"], 0, "A micrometer is widely used for accurate measurement of outside diameters and thicknesses."],
+        ["joining-metal", "Which process is commonly used to join two metal parts permanently?", ["Welding", "Polishing", "Measuring", "Lubricating"], 0, "Welding joins metal parts by creating a strong bonded joint using heat, pressure or both."],
+        ["lighter-metal", "Which material is generally lighter?", ["Aluminium", "Steel", "Cast iron", "Copper"], 0, "Aluminium has a much lower density than steel, which makes it useful where lower weight matters."],
+        ["gear-purpose", "What is the main purpose of gears?", ["Transfer motion and torque", "Measure temperature", "Prevent painting", "Store electricity"], 0, "Gears transfer motion and torque between shafts and can also change speed or direction."],
+        ["lubrication", "Why is lubrication used in machines?", ["Reduce friction and wear", "Increase rust", "Make parts heavier", "Change dimensions"], 0, "Lubrication creates a protective film that reduces friction, heat and wear between moving surfaces."],
+        ["heat-treatment", "Why is metal heat treated?", ["Change its properties", "Change its colour only", "Make it transparent", "Remove all weight"], 0, "Heat treatment can improve properties such as hardness, strength, toughness and wear resistance."],
+        ["tolerance", "Why are tolerances shown on engineering drawings?", ["Define acceptable size variation", "Choose paint colour", "Increase part weight", "Hide dimensions"], 0, "Tolerances define how much a dimension may vary while the component still functions correctly."],
+        ["cnc", "What does CNC equipment help manufacturers do?", ["Machine parts accurately and repeatedly", "Only pack products", "Only paint components", "Only test hardness"], 0, "CNC machines follow programmed instructions to produce components accurately and consistently."],
+        ["hardness", "What does a hardness test mainly check?", ["Resistance to indentation", "Electrical voltage", "Part colour", "Shipping weight"], 0, "Hardness testing indicates how strongly a material resists indentation or local deformation."],
+        ["surface-finish", "Why might a shaft be ground after turning?", ["Improve size accuracy and finish", "Make it hollow", "Add threads automatically", "Change the alloy"], 0, "Grinding is often used after turning to achieve tighter dimensions and a smoother surface finish."],
+        ["reverse-engineering", "What does reverse engineering usually begin with?", ["Studying an existing part", "Ignoring the part", "Painting a drawing", "Choosing packaging"], 0, "Reverse engineering studies an existing component so its dimensions, material and function can be understood and reproduced."],
+        ["corrosion", "Which material is widely known for corrosion resistance?", ["Stainless steel", "Untreated mild steel", "Paper", "Wood"], 0, "Stainless steel contains chromium, which helps form a protective surface layer against corrosion."],
+        ["inspection", "Why are finished components inspected?", ["Confirm they meet requirements", "Increase delivery time", "Remove drawings", "Change customer names"], 0, "Inspection confirms that dimensions, material, finish and other specified requirements have been met."],
+        ["chamfer", "Why is a chamfer added to a sharp edge?", ["Improve safety and assembly", "Increase rust", "Make measurement impossible", "Reduce material grade"], 0, "Chamfers remove sharp edges and can guide mating parts during assembly."],
+        ["drawing-revision", "Before manufacturing a part, what should be checked first?", ["Latest drawing revision", "Website colour", "Courier name", "Office temperature"], 0, "Using the latest approved drawing revision avoids manufacturing to outdated dimensions or requirements."],
+        ["runout", "What does excessive shaft runout usually mean?", ["The shaft does not rotate truly", "The shaft is too colourful", "The material is lighter", "The drawing is digital"], 0, "Runout shows how much a rotating surface varies from its intended axis."],
+        ["polymer-friction", "Which material type is often selected for low-friction sliding parts?", ["Engineering polymer", "Concrete", "Glass wool", "Paper"], 0, "Engineering polymers such as UHMWPE can provide low friction, good wear resistance and quiet operation."],
+        ["quality-documents", "Why are material and inspection certificates important?", ["Provide traceability", "Replace the component", "Increase machine speed", "Create a coating"], 0, "Certificates provide traceability and evidence that specified materials and inspections were completed."],
+        ["thread-purpose", "What is the main purpose of a threaded fastener?", ["Join parts securely", "Measure hardness", "Reduce density", "Detect cracks"], 0, "Threaded fasteners such as bolts and screws create removable, secure joints between components."],
+        ["casting", "Which process forms metal by pouring it into a mould?", ["Casting", "Turning", "Grinding", "Drilling"], 0, "Casting forms a component by pouring molten metal into a mould and allowing it to solidify."],
+        ["forging", "Which process shapes metal mainly using compressive force?", ["Forging", "Painting", "Polishing", "Measuring"], 0, "Forging shapes metal with compressive force and can improve strength through favourable grain flow."],
+        ["drilling", "Which operation is used to create a round hole?", ["Drilling", "Welding", "Plating", "Balancing"], 0, "Drilling uses a rotating cutting tool to produce a round hole in a workpiece."],
+        ["plating", "Why is hard chrome plating applied to some shafts?", ["Improve wear resistance", "Make them flexible", "Reduce length", "Remove all hardness"], 0, "Hard chrome plating can improve wear resistance, reduce friction and restore a working diameter."],
+        ["balance", "Why are rotating parts sometimes balanced?", ["Reduce vibration", "Increase corrosion", "Change material grade", "Remove tolerances"], 0, "Balancing distributes mass more evenly around the rotation axis and helps reduce vibration."],
+        ["fit", "What does a clearance fit allow?", ["Parts to assemble with space between them", "Permanent welding", "No movement at all", "A colour change"], 0, "A clearance fit leaves intentional space between mating parts so they can assemble or move freely."],
+        ["roughness", "A smoother surface generally has which roughness value?", ["Lower", "Higher", "Always zero", "Unrelated"], 0, "A lower measured roughness value generally indicates a smoother surface profile."],
+        ["nondestructive", "What is special about non-destructive testing?", ["It checks parts without damaging them", "It always breaks the part", "It only measures weight", "It changes the alloy"], 0, "Non-destructive testing examines a component for flaws without making it unusable."],
+        ["custom-component", "What is a made-to-drawing component?", ["A part manufactured to customer specifications", "A random stock item", "A packaging label", "A machine manual"], 0, "Made-to-drawing components are manufactured according to the customer’s dimensions, material and technical requirements."]
       ];
 
       const digitMessages = [
@@ -1961,7 +1952,7 @@
         "Traceability links a finished component back to its material, process and inspection records."
       ];
 
-      const voteStoreKey = "chillche-poll-votes-v1";
+      const voteStoreKey = "chillche-quiz-answers-v1";
       const deviceStoreKey = "chillche-poll-device-v1";
       const supabaseUrl = "https://sxatuhuygjefazkkfhrc.supabase.co";
       const supabaseKey = "sb_publishable_D4JwSXa5xlkGOb24Za3d2w_WCZShuyA";
@@ -1970,10 +1961,7 @@
       }).format(new Date());
       function stableHash(text) {
         let h = 2166136261;
-        for (let i = 0; i < text.length; i++) {
-          h ^= text.charCodeAt(i);
-          h = Math.imul(h, 16777619);
-        }
+        for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
         return h >>> 0;
       }
       function seededDailyDigit(isoDate, seed) {
@@ -1984,21 +1972,21 @@
         return Number(squared[position]);
       }
       const dailyDigit = seededDailyDigit(dateKey, 1155);
-      const activePoll = pollBank[stableHash("poll:" + dateKey) % pollBank.length];
-      const pollId = activePoll[0];
-      const question = activePoll[1];
-      const answers = activePoll[2];
+      const activeQuiz = quizBank[stableHash("quiz:" + dateKey) % quizBank.length];
+      const pollId = "quiz-" + activeQuiz[0];
+      const question = activeQuiz[1];
+      const answers = activeQuiz[2];
+      const correctIndex = activeQuiz[3];
+      const explanation = activeQuiz[4];
       const voted = JSON.parse(localStorage.getItem(voteStoreKey) || "{}");
       const counts = answers.map(() => 0);
       let votePending = false;
       let resultsPromise = null;
       const overlay = document.getElementById("poll-overlay");
       const optionsBox = document.getElementById("poll-options");
+      const feedbackBox = document.getElementById("quiz-feedback");
       document.getElementById("nav-digit").textContent = dailyDigit;
       document.getElementById("modal-digit").textContent = dailyDigit;
-      document.getElementById("digit-message").textContent = digitMessages[dailyDigit - 1];
-      document.getElementById("daily-fact").textContent =
-        engineeringFacts[stableHash("fact:" + dateKey) % engineeringFacts.length];
       document.getElementById("poll-question").textContent = question;
 
       function percentages(values) {
@@ -2007,38 +1995,46 @@
         const raw = values.map((n) => (n * 100) / total);
         const whole = raw.map(Math.floor);
         let remainder = 100 - whole.reduce((sum, n) => sum + n, 0);
-        raw.map((n, i) => [n - whole[i], i]).sort((a, b) => b[0] - a[0])
-          .slice(0, remainder).forEach(([, i]) => whole[i]++);
+        raw.map((n, i) => [n - whole[i], i]).sort((a, b) => b[0] - a[0]).slice(0, remainder).forEach(([, i]) => whole[i]++);
         return whole;
       }
       function renderPoll(showResults) {
         const pct = percentages(counts);
+        const selectedIndex = voted[pollId];
         optionsBox.innerHTML = "";
         answers.forEach((answer, index) => {
           const button = document.createElement("button");
           button.type = "button";
-          button.className = "poll-option" + (voted[pollId] === index ? " selected" : "");
+          let classes = "poll-option";
+          if (showResults && index === correctIndex) classes += " correct";
+          if (showResults && index === selectedIndex && index !== correctIndex) classes += " incorrect";
+          button.className = classes;
           button.disabled = showResults || votePending;
-          const fill = document.createElement("span");
-          fill.className = "poll-fill";
-          const label = document.createElement("span");
-          label.className = "poll-label";
-          label.textContent = answer;
+          const fill = document.createElement("span"); fill.className = "poll-fill";
+          const label = document.createElement("span"); label.className = "poll-label"; label.textContent = answer;
           button.append(fill, label);
           if (showResults) {
-            const result = document.createElement("span");
-            result.className = "poll-percent";
-            result.textContent = pct[index] + "%";
+            const result = document.createElement("span"); result.className = "poll-percent"; result.textContent = pct[index] + "%";
             button.append(result);
             requestAnimationFrame(() => { fill.style.width = pct[index] + "%"; });
-          } else {
-            button.addEventListener("click", () => castVote(index));
-          }
+          } else button.addEventListener("click", () => castVote(index));
           optionsBox.append(button);
         });
-        document.getElementById("poll-note").textContent = showResults
-          ? "Live results from everyone who voted."
-          : votePending ? "Recording your vote…" : "Choose wisely. Engineering history may remember this.";
+        if (showResults) {
+          const total = counts.reduce((sum, n) => sum + n, 0);
+          const correctCount = counts[correctIndex] || 0;
+          const wasCorrect = selectedIndex === correctIndex;
+          feedbackBox.className = "quiz-feedback show " + (wasCorrect ? "correct-feedback" : "incorrect-feedback");
+          feedbackBox.innerHTML = `
+            <strong>${wasCorrect ? "✅ Correct!" : "Not quite — the correct answer is highlighted."}</strong>
+            <span><b>💡 Did you know?</b><br><br>${explanation}</span>`;
+          document.getElementById("poll-note").textContent = total
+            ? `${pct[correctIndex]}% of visitors answered correctly.`
+            : "You are the first person to answer today’s quiz.";
+        } else {
+          feedbackBox.className = "quiz-feedback"; feedbackBox.innerHTML = "";
+          document.getElementById("poll-note").textContent = votePending ? "Checking your answer…" : "Choose an answer to test your engineering knowledge.";
+        }
       }
 
       function getDeviceId() {
@@ -2093,9 +2089,9 @@
           applyResults(rows);
           if (overlay.classList.contains("open")) renderPoll(hasVoted);
         })().catch((error) => {
-          console.error("Unable to load shared poll results", error);
+          console.error("Unable to load shared quiz results", error);
           resultsPromise = null;
-          document.getElementById("poll-note").textContent = "Live results are temporarily unavailable. Please try again.";
+          document.getElementById("poll-note").textContent = "Live quiz results are temporarily unavailable. Please try again.";
         });
         return resultsPromise;
       }
@@ -2115,12 +2111,12 @@
           localStorage.setItem(voteStoreKey, JSON.stringify(voted));
           votePending = false;
           renderPoll(true);
-          if (typeof gtag === "function") gtag("event", "daily_poll_vote", { poll_id: pollId, option_index: index });
+          if (typeof gtag === "function") gtag("event", "daily_quiz_answer", { poll_id: pollId, option_index: index });
         } catch (error) {
-          console.error("Unable to record poll vote", error);
+          console.error("Unable to record quiz answer", error);
           votePending = false;
           renderPoll(false);
-          document.getElementById("poll-note").textContent = "Your vote could not be recorded. Please check your connection and try again.";
+          document.getElementById("poll-note").textContent = "Your answer could not be recorded. Please check your connection and try again.";
         }
       }
       function openPoll() {
