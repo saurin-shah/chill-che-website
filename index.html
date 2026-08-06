@@ -1125,7 +1125,7 @@
           ><a class="nav-tab" href="#partnerships"><span class="nav-icon"><i data-lucide="handshake"></i></span>India Partnerships</a
           ><a class="nav-tab" href="#about"><span class="nav-icon"><i data-lucide="circle-user-round"></i></span>About</a
           ><button class="daily-digit" id="daily-digit" type="button" aria-haspopup="dialog" aria-label="Open today's Daily Engineering Quiz">
-            🎲 Daily Digit <span class="poll-tease">NEW TODAY</span> <strong id="nav-digit">–</strong>
+            Daily Digit <span class="poll-tease">DAILY QUIZ</span> <strong id="nav-digit">–</strong>
           </button
           ><a class="button quote-tab" href="#contact">Request a quote <span class="quote-arrow">→</span></a>
         </div>
@@ -1137,12 +1137,16 @@
         <div class="digit-display">
           <strong id="modal-digit">–</strong>
           <div>
-            <div class="poll-kicker">🎲 Daily Digit</div>
-            <p>Today’s lucky engineering number.<br><small>(Just for fun. 😄)</small></p>
+            <div class="poll-kicker">Your Daily Digit</div>
+            <p id="digit-message"></p>
           </div>
         </div>
-        <p class="digit-explainer">Every day, we post a number from 1 to 9—just for fun.</p>
-        <div class="poll-kicker">🎯 Daily Engineering Quiz</div>
+        <p class="digit-explainer">Every day, we post a number from 1 to 9—just for fun. Because why not?</p>
+        <div class="daily-fact-block">
+          <strong>Today’s engineering fact</strong>
+          <p id="daily-fact"></p>
+        </div>
+        <div class="poll-kicker">Today’s engineering quiz</div>
         <h2 id="poll-question"></h2>
         <div class="poll-options" id="poll-options"></div>
         <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
@@ -1875,36 +1879,36 @@
       /* Daily Digit + Daily Engineering Quiz
          Each quiz has a permanent ID, so shared results are reused whenever it returns. */
       const quizBank = [
-        ["round-shaft", "Which machine is commonly used to make a round shaft?", ["Turning", "Milling", "Welding", "Grinding"], 0, "Turning is one of the most common machining operations for producing shafts, rollers, pins and cylindrical components. Many precision shafts supplied through Chill Che begin with CNC turning before heat treatment and finish grinding."],
-        ["bearing-purpose", "What is the main purpose of a bearing?", ["Reduce friction", "Increase weight", "Change colour", "Create heat"], 0, "Bearings support moving parts and help reduce friction between rotating or sliding surfaces."],
-        ["accurate-diameter", "Which tool is commonly used to measure a shaft diameter accurately?", ["Micrometer", "Hammer", "Spanner", "Paint brush"], 0, "A micrometer is widely used for accurate measurement of outside diameters and thicknesses."],
-        ["joining-metal", "Which process is commonly used to join two metal parts permanently?", ["Welding", "Polishing", "Measuring", "Lubricating"], 0, "Welding joins metal parts by creating a strong bonded joint using heat, pressure or both."],
-        ["lighter-metal", "Which material is generally lighter?", ["Aluminium", "Steel", "Cast iron", "Copper"], 0, "Aluminium has a much lower density than steel, which makes it useful where lower weight matters."],
-        ["gear-purpose", "What is the main purpose of gears?", ["Transfer motion and torque", "Measure temperature", "Prevent painting", "Store electricity"], 0, "Gears transfer motion and torque between shafts and can also change speed or direction."],
-        ["lubrication", "Why is lubrication used in machines?", ["Reduce friction and wear", "Increase rust", "Make parts heavier", "Change dimensions"], 0, "Lubrication creates a protective film that reduces friction, heat and wear between moving surfaces."],
-        ["heat-treatment", "Why is metal heat treated?", ["Change its properties", "Change its colour only", "Make it transparent", "Remove all weight"], 0, "Heat treatment can improve properties such as hardness, strength, toughness and wear resistance."],
-        ["tolerance", "Why are tolerances shown on engineering drawings?", ["Define acceptable size variation", "Choose paint colour", "Increase part weight", "Hide dimensions"], 0, "Tolerances define how much a dimension may vary while the component still functions correctly."],
-        ["cnc", "What does CNC equipment help manufacturers do?", ["Machine parts accurately and repeatedly", "Only pack products", "Only paint components", "Only test hardness"], 0, "CNC machines follow programmed instructions to produce components accurately and consistently."],
-        ["hardness", "What does a hardness test mainly check?", ["Resistance to indentation", "Electrical voltage", "Part colour", "Shipping weight"], 0, "Hardness testing indicates how strongly a material resists indentation or local deformation."],
-        ["surface-finish", "Why might a shaft be ground after turning?", ["Improve size accuracy and finish", "Make it hollow", "Add threads automatically", "Change the alloy"], 0, "Grinding is often used after turning to achieve tighter dimensions and a smoother surface finish."],
-        ["reverse-engineering", "What does reverse engineering usually begin with?", ["Studying an existing part", "Ignoring the part", "Painting a drawing", "Choosing packaging"], 0, "Reverse engineering studies an existing component so its dimensions, material and function can be understood and reproduced."],
-        ["corrosion", "Which material is widely known for corrosion resistance?", ["Stainless steel", "Untreated mild steel", "Paper", "Wood"], 0, "Stainless steel contains chromium, which helps form a protective surface layer against corrosion."],
-        ["inspection", "Why are finished components inspected?", ["Confirm they meet requirements", "Increase delivery time", "Remove drawings", "Change customer names"], 0, "Inspection confirms that dimensions, material, finish and other specified requirements have been met."],
-        ["chamfer", "Why is a chamfer added to a sharp edge?", ["Improve safety and assembly", "Increase rust", "Make measurement impossible", "Reduce material grade"], 0, "Chamfers remove sharp edges and can guide mating parts during assembly."],
-        ["drawing-revision", "Before manufacturing a part, what should be checked first?", ["Latest drawing revision", "Website colour", "Courier name", "Office temperature"], 0, "Using the latest approved drawing revision avoids manufacturing to outdated dimensions or requirements."],
-        ["runout", "What does excessive shaft runout usually mean?", ["The shaft does not rotate truly", "The shaft is too colourful", "The material is lighter", "The drawing is digital"], 0, "Runout shows how much a rotating surface varies from its intended axis."],
-        ["polymer-friction", "Which material type is often selected for low-friction sliding parts?", ["Engineering polymer", "Concrete", "Glass wool", "Paper"], 0, "Engineering polymers such as UHMWPE can provide low friction, good wear resistance and quiet operation."],
-        ["quality-documents", "Why are material and inspection certificates important?", ["Provide traceability", "Replace the component", "Increase machine speed", "Create a coating"], 0, "Certificates provide traceability and evidence that specified materials and inspections were completed."],
-        ["thread-purpose", "What is the main purpose of a threaded fastener?", ["Join parts securely", "Measure hardness", "Reduce density", "Detect cracks"], 0, "Threaded fasteners such as bolts and screws create removable, secure joints between components."],
-        ["casting", "Which process forms metal by pouring it into a mould?", ["Casting", "Turning", "Grinding", "Drilling"], 0, "Casting forms a component by pouring molten metal into a mould and allowing it to solidify."],
-        ["forging", "Which process shapes metal mainly using compressive force?", ["Forging", "Painting", "Polishing", "Measuring"], 0, "Forging shapes metal with compressive force and can improve strength through favourable grain flow."],
-        ["drilling", "Which operation is used to create a round hole?", ["Drilling", "Welding", "Plating", "Balancing"], 0, "Drilling uses a rotating cutting tool to produce a round hole in a workpiece."],
-        ["plating", "Why is hard chrome plating applied to some shafts?", ["Improve wear resistance", "Make them flexible", "Reduce length", "Remove all hardness"], 0, "Hard chrome plating can improve wear resistance, reduce friction and restore a working diameter."],
-        ["balance", "Why are rotating parts sometimes balanced?", ["Reduce vibration", "Increase corrosion", "Change material grade", "Remove tolerances"], 0, "Balancing distributes mass more evenly around the rotation axis and helps reduce vibration."],
-        ["fit", "What does a clearance fit allow?", ["Parts to assemble with space between them", "Permanent welding", "No movement at all", "A colour change"], 0, "A clearance fit leaves intentional space between mating parts so they can assemble or move freely."],
-        ["roughness", "A smoother surface generally has which roughness value?", ["Lower", "Higher", "Always zero", "Unrelated"], 0, "A lower measured roughness value generally indicates a smoother surface profile."],
-        ["nondestructive", "What is special about non-destructive testing?", ["It checks parts without damaging them", "It always breaks the part", "It only measures weight", "It changes the alloy"], 0, "Non-destructive testing examines a component for flaws without making it unusable."],
-        ["custom-component", "What is a made-to-drawing component?", ["A part manufactured to customer specifications", "A random stock item", "A packaging label", "A machine manual"], 0, "Made-to-drawing components are manufactured according to the customer’s dimensions, material and technical requirements."]
+        ["stainless-passive-layer", "Why does stainless steel resist corrosion?", ["Its surface is oilier", "Chromium forms a passive oxide layer", "It contains no iron", "It is always heat treated"], 1, "Chromium reacts with oxygen to form a thin, self-repairing passive oxide film that protects the underlying metal."],
+        ["shaft-torsional-stiffness", "Which change most strongly increases a solid shaft’s torsional stiffness?", ["Doubling its length", "Increasing its diameter", "Improving surface finish", "Adding a chamfer"], 1, "For a solid circular shaft, torsional stiffness rises with the fourth power of diameter, making diameter especially influential."],
+        ["ut-purpose", "What is ultrasonic testing mainly used to detect?", ["Surface colour variation", "Internal discontinuities", "Chemical composition", "Dimensional runout"], 1, "Ultrasonic testing sends high-frequency sound into a component and interprets reflected signals from internal features or flaws."],
+        ["mpt-material", "Magnetic-particle testing is suitable for which materials?", ["All plastics", "All non-ferrous metals", "Ferromagnetic materials", "Only stainless steel"], 2, "MPT requires a material that can be magnetised, such as many carbon and low-alloy steels."],
+        ["dpt-flaws", "Dye-penetrant testing can reveal which type of flaw?", ["Deep internal voids", "Surface-breaking discontinuities", "Incorrect hardness", "Chemical segregation"], 1, "Penetrant enters flaws open to the surface and is drawn back out by developer, making those indications visible."],
+        ["go-no-go", "What does a go/no-go gauge primarily verify?", ["Exact measured size", "Whether a feature is within limits", "Surface roughness", "Material grade"], 1, "A go/no-go gauge gives a rapid acceptance check against the permitted dimensional limits rather than an exact numerical reading."],
+        ["case-hardening", "What is the purpose of case hardening?", ["Soft surface and hard core", "Hard wear-resistant surface and tough core", "Uniform softness", "Corrosion resistance only"], 1, "Case hardening creates a hard outer layer for wear resistance while retaining a tougher, more impact-resistant core."],
+        ["forging-grain-flow", "Compared with machining from plate, forging can improve what?", ["Paint adhesion only", "Grain flow around the component shape", "Electrical insulation", "Transparency"], 1, "Controlled forging can orient grain flow with the component geometry, supporting strength and fatigue performance."],
+        ["fatigue-load", "Fatigue failure is most closely associated with what?", ["One static load only", "Repeated or cyclic loading", "Colour change", "Low humidity"], 1, "Fatigue cracks can initiate and grow under repeated loading, even when peak stress is below the static strength."],
+        ["preload-bearing", "Why is preload used in some bearing arrangements?", ["To increase looseness", "To improve stiffness and positional accuracy", "To reduce shaft diameter", "To eliminate lubrication"], 1, "Correct preload can reduce internal clearance and improve rigidity and positional accuracy, though excessive preload increases heat and wear."],
+        ["thermal-expansion", "Why must thermal expansion be considered in precision assemblies?", ["It changes dimensions with temperature", "It changes alloy chemistry", "It removes residual stress instantly", "It prevents oxidation"], 0, "Materials expand and contract with temperature, which can alter fits, clearances, alignment and measured dimensions."],
+        ["annealing", "What can annealing commonly do to metal?", ["Soften it and relieve stress", "Always increase hardness", "Add chromium", "Create a coating"], 0, "Depending on alloy and cycle, annealing can soften material, improve machinability and relieve residual stresses."],
+        ["backlash", "Why is backlash provided between mating gears?", ["To increase noise", "For lubrication and thermal expansion allowance", "To eliminate tooth clearance", "To increase gear weight"], 1, "A controlled amount of backlash prevents binding and provides space for lubricant and thermal or manufacturing variation."],
+        ["chamfer", "What is a common purpose of a chamfer?", ["Create an internal crack", "Remove a sharp edge and aid assembly", "Measure hardness", "Increase component length"], 1, "Chamfers remove sharp corners, improve handling and help guide mating parts during assembly."],
+        ["grinding", "Which process is commonly chosen for very tight tolerances and fine finishes?", ["Grinding", "Flame cutting", "Sand casting", "Manual marking"], 0, "Grinding uses abrasive cutting and is often applied after machining or heat treatment for close size control and fine surface finish."],
+        ["runout", "What does runout indicate on a rotating component?", ["Chemical composition", "Variation relative to a reference axis during rotation", "Hardness depth", "Coating colour"], 1, "Runout measures how much a surface or feature varies as the component rotates relative to a datum axis."],
+        ["surface-roughness", "A lower Ra value generally indicates what?", ["A rougher surface", "A smoother average surface profile", "A harder material", "A larger diameter"], 1, "Ra is the arithmetic average surface roughness; a lower value generally corresponds to a smoother measured profile."],
+        ["proof-load", "What does a fastener proof-load test check?", ["Paint thickness", "Ability to withstand a specified load without permanent deformation", "Thread colour", "Magnetic permeability only"], 1, "The proof load is a specified tensile load that the fastener should sustain without unacceptable permanent set."],
+        ["traceability", "What does manufacturing traceability connect?", ["Only price to purchase order", "Finished parts to material, process and inspection records", "Only operator attendance", "Machine colour to workshop"], 1, "Traceability helps connect a delivered component to its raw material heat, manufacturing stages, inspections and documentation."],
+        ["nabl", "What does NABL accreditation primarily demonstrate for a laboratory?", ["Every result is automatically accepted worldwide", "Competence for specified testing or calibration scope", "The lab manufactures components", "No calibration is required"], 1, "NABL accreditation recognises laboratory competence for activities listed within its accredited scope; the exact scope still matters."],
+        ["hardness", "Which property does a hardness test most directly assess?", ["Resistance to local indentation", "Exact chemical composition", "Internal porosity", "Electrical voltage"], 0, "Hardness methods assess resistance to indentation or penetration under defined test conditions."],
+        ["heat-treatment-distortion", "Why may precision parts need finishing after heat treatment?", ["Heat treatment can cause dimensional change or distortion", "Heat treatment removes all tolerances", "Heat treatment always adds coating", "Heat treatment makes measurement impossible"], 0, "Heating, cooling and phase transformation can change dimensions or introduce distortion, so finish machining or grinding may follow."],
+        ["fit-clearance", "In a clearance fit, what is true before assembly?", ["The shaft is always larger than the hole", "The hole is larger than the shaft within the specified limits", "Both sizes must be identical", "The parts require welding"], 1, "A clearance fit maintains positive clearance between the mating hole and shaft across their permitted size limits."],
+        ["calibration", "Why are measuring instruments calibrated?", ["To make them look new", "To establish measurement relationship and accuracy against standards", "To eliminate operator training", "To change the drawing tolerance"], 1, "Calibration compares instrument response with traceable standards and documents its measurement performance."],
+        ["residual-stress", "Can residual stress exist without an external load?", ["Yes", "No", "Only in plastics", "Only above melting temperature"], 0, "Residual stresses can remain locked into a component after manufacturing processes such as forming, welding, machining or heat treatment."],
+        ["igc", "Intergranular corrosion primarily attacks which region?", ["Grain boundaries", "Component centre only", "Paint layer only", "Lubricant film"], 0, "Intergranular corrosion preferentially attacks at or near grain boundaries under susceptible metallurgical and environmental conditions."],
+        ["macroetch", "What can macro-etch examination reveal?", ["Large-scale material structure and segregation", "Exact surface roughness", "Final coating thickness only", "Digital dimensions"], 0, "Macro-etching can reveal features such as flow lines, segregation, laps, cracks or weld structure at relatively low magnification."],
+        ["impact-test", "What does an impact test help evaluate?", ["Material toughness under rapid loading", "Only density", "Thread pitch", "Coating adhesion only"], 0, "Impact testing measures energy absorbed during fracture under a rapidly applied load and helps indicate notch toughness."],
+        ["passivation", "Passivation treatment of stainless steel is intended mainly to do what?", ["Add a thick chrome coating", "Support formation of a clean passive surface", "Increase component diameter", "Create gear teeth"], 1, "Passivation removes free iron contamination and supports formation of the protective chromium-rich passive surface."],
+        ["drawing-revision", "Before manufacturing from a drawing, what should be confirmed first?", ["Latest approved revision", "Font style", "Paper colour", "Email subject length"], 0, "Using the current approved drawing revision prevents production against superseded dimensions, notes or material requirements."]
       ];
 
       const digitMessages = [
@@ -1987,6 +1991,8 @@
       const feedbackBox = document.getElementById("quiz-feedback");
       document.getElementById("nav-digit").textContent = dailyDigit;
       document.getElementById("modal-digit").textContent = dailyDigit;
+      document.getElementById("digit-message").textContent = digitMessages[dailyDigit - 1];
+      document.getElementById("daily-fact").textContent = engineeringFacts[stableHash("fact:" + dateKey) % engineeringFacts.length];
       document.getElementById("poll-question").textContent = question;
 
       function percentages(values) {
@@ -2025,11 +2031,9 @@
           const correctCount = counts[correctIndex] || 0;
           const wasCorrect = selectedIndex === correctIndex;
           feedbackBox.className = "quiz-feedback show " + (wasCorrect ? "correct-feedback" : "incorrect-feedback");
-          feedbackBox.innerHTML = `
-            <strong>${wasCorrect ? "✅ Correct!" : "Not quite — the correct answer is highlighted."}</strong>
-            <span><b>💡 Did you know?</b><br><br>${explanation}</span>`;
+          feedbackBox.innerHTML = `<strong>${wasCorrect ? "Correct! Well engineered." : "Not quite — the correct answer is highlighted."}</strong><span>${explanation}</span>`;
           document.getElementById("poll-note").textContent = total
-            ? `${pct[correctIndex]}% of visitors answered correctly.`
+            ? `${correctCount} of ${total} visitors (${pct[correctIndex]}%) answered correctly.`
             : "You are the first person to answer today’s quiz.";
         } else {
           feedbackBox.className = "quiz-feedback"; feedbackBox.innerHTML = "";
