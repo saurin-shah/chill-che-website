@@ -569,7 +569,7 @@
         background-position: center;
         background-size: cover;
         filter: grayscale(1) sepia(.12);
-        opacity: .64;
+        opacity: .72;
         transform: scale(1.035);
         transition: opacity .45s ease, transform .65s cubic-bezier(.22, 1, .36, 1);
       }
@@ -583,7 +583,7 @@
           linear-gradient(0deg, rgb(217 119 6 / 3.5%), rgb(217 119 6 / 3.5%));
       }
       .capability-card:hover::before {
-        opacity: .72;
+        opacity: .80;
         transform: scale(1.085);
       }
       .capability-card h3,
@@ -592,6 +592,9 @@
         max-width: 88%;
       }
       .materials-feature {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
@@ -599,11 +602,32 @@
         margin-top: 18px;
         padding: 28px 30px;
         border: 1px solid var(--line);
-        background: linear-gradient(105deg, #fffaf4 0%, #fbfaf7 55%, #f3eee6 100%);
+        background: #fbfaf7;
         color: var(--ink);
         text-decoration: none;
         transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
       }
+      .materials-feature::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background: url("cnc-machining.webp") center 46% / cover no-repeat;
+        filter: grayscale(1) sepia(.12);
+        opacity: .72;
+        transform: scale(1.02);
+        transition: opacity .45s ease, transform .65s cubic-bezier(.22, 1, .36, 1);
+      }
+      .materials-feature::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(90deg, rgb(255 255 255 / 91%) 0%, rgb(255 255 255 / 70%) 55%, rgb(255 255 255 / 30%) 100%),
+          linear-gradient(0deg, rgb(217 119 6 / 4%), rgb(217 119 6 / 4%));
+      }
+      .materials-feature:hover::before { opacity: .80; transform: scale(1.055); }
       .materials-feature:hover {
         transform: translateY(-2px);
         border-color: var(--accent);
@@ -1433,7 +1457,7 @@ nav.wrap { gap: 22px; }
           </div>
           <a class="materials-feature" href="infrastructure.html#materials" aria-label="Explore materials and manufacturing processes">
             <div class="materials-feature-copy">
-              <div class="materials-feature-kicker">Materials & process capability</div>
+              <div class="materials-feature-kicker">Materials, grades &amp; process capability</div>
               <h3>From material selection to finished component.</h3>
               <p><strong>17-4 PH · SS302/304/316/410 · EN8 · EN9 · EN19 · EN24 · EN31 · A2 · D2 · C63000 Aluminium Bronze · Engineering Polymers</strong></p>
               <p class="materials-feature-processes">CNC Turning · Milling · Grinding · Forging · Heat Treatment · Surface Treatment · Sheet Metal & more</p>
