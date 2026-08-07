@@ -868,12 +868,18 @@ nav.wrap { gap: 22px; }
   
 <script>
 (function(){
-  function stableHash(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
-  function seededDailyDigit(dateKey, seed){return (stableHash(dateKey+":"+seed)%9)+1;}
-  const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
-  const get=t=>parts.find(p=>p.type===t)?.value||"";
-  const dateKey=get("year")+"-"+get("month")+"-"+get("day");
-  const el=document.getElementById("nav-digit"); if(el) el.textContent=seededDailyDigit(dateKey,1155);
+  function seededDailyDigit(isoDate, seed) {
+    const compactDate = BigInt(isoDate.replace(/-/g, ""));
+    const squared = String((compactDate + BigInt(seed)) ** 2n);
+    let position = squared.length - 6;
+    while (position >= 0 && squared[position] === "0") position--;
+    return Number(squared[position]);
+  }
+  const dateKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit"
+  }).format(new Date());
+  const el = document.getElementById("nav-digit");
+  if (el) el.textContent = seededDailyDigit(dateKey, 1155);
 })();
 </script>
 </body>
