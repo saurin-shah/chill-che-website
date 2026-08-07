@@ -591,6 +591,63 @@
         position: relative;
         max-width: 88%;
       }
+      .materials-feature {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 28px;
+        margin-top: 18px;
+        padding: 28px 30px;
+        border: 1px solid var(--line);
+        background: linear-gradient(105deg, #fffaf4 0%, #fbfaf7 55%, #f3eee6 100%);
+        color: var(--ink);
+        text-decoration: none;
+        transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      }
+      .materials-feature:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+        box-shadow: 0 10px 28px rgb(0 0 0 / 7%);
+      }
+      .materials-feature-kicker {
+        margin-bottom: 7px;
+        color: var(--accent-dark);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: .11em;
+        text-transform: uppercase;
+      }
+      .materials-feature h3 {
+        margin: 0 0 10px;
+        font-size: clamp(22px, 2.3vw, 30px);
+        line-height: 1.15;
+      }
+      .materials-feature p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .materials-feature p + p { margin-top: 5px; }
+      .materials-feature-processes { font-size: 14px; }
+      .materials-feature-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--ink);
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 850;
+        transition: background .2s ease, color .2s ease;
+      }
+      .materials-feature:hover .materials-feature-cta {
+        background: var(--ink);
+        color: #fff;
+      }
+      @media (max-width: 760px) {
+        .materials-feature { grid-template-columns: 1fr; gap: 18px; padding: 24px; }
+        .materials-feature-cta { justify-self: start; white-space: normal; }
+      }
       .product-card {
         padding: 0;
         overflow: hidden;
@@ -1213,6 +1270,7 @@ nav.wrap { gap: 22px; }
             <div class="dropdown">
               <a href="infrastructure.html"><i class="drop-icon" data-lucide="factory"></i><span>Infrastructure & machinery<span class="drop-note">Facility, handling and manufacturing resources</span></span></a>
               <a href="#capabilities"><i class="drop-icon" data-lucide="wrench"></i><span>Engineering capabilities</span></a>
+              <a href="infrastructure.html#materials"><i class="drop-icon" data-lucide="layers-3"></i><span>Materials & processes</span></a>
               <a href="#quality"><i class="drop-icon" data-lucide="badge-check"></i><span>Quality & inspection</span></a>
               <a href="#partnerships"><i class="drop-icon" data-lucide="handshake"></i><span>India partnerships</span></a>
             </div>
@@ -1372,14 +1430,16 @@ nav.wrap { gap: 22px; }
                 the supply chain.
               </p>
             </article>
-            <article class="card capability-card" style="--capability-image: url('cnc-machining.webp')">
-              <h3>Materials & Process Routing</h3>
-              <p>
-                17-4 PH, stainless steels, EN grades, aluminium bronze, tool steels and engineered polymers with machining, forging, heat-treatment and finishing support.
-                <a href="infrastructure.html#materials" style="display:inline-block;margin-top:8px;font-weight:800;color:inherit">View materials & processes →</a>
-              </p>
-            </article>
           </div>
+          <a class="materials-feature" href="infrastructure.html#materials" aria-label="Explore materials and manufacturing processes">
+            <div class="materials-feature-copy">
+              <div class="materials-feature-kicker">Materials & process capability</div>
+              <h3>From material selection to finished component.</h3>
+              <p><strong>17-4 PH · SS302/304/316/410 · EN8 · EN9 · EN19 · EN24 · EN31 · A2 · D2 · C63000 Aluminium Bronze · Engineering Polymers</strong></p>
+              <p class="materials-feature-processes">CNC Turning · Milling · Grinding · Forging · Heat Treatment · Surface Treatment · Sheet Metal & more</p>
+            </div>
+            <span class="materials-feature-cta">Explore Materials & Processes <span aria-hidden="true">→</span></span>
+          </a>
         </div>
       </section>
       <section id="products" class="dark">
