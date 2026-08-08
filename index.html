@@ -374,6 +374,19 @@
       }
       .poll-note { margin: 16px 0 0; color: var(--muted); font-size: 12px; }
 
+
+      /* Personal quiz record — stored only in this browser */
+      .quiz-record { margin-top: 16px; padding: 15px 16px; border: 1px solid #ead8c2; border-radius: 14px; background: linear-gradient(135deg,#fffaf4,#fff3e4); }
+      .quiz-record-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:11px; }
+      .quiz-record-head strong { font-size:14px; }
+      .quiz-record-head span { color:#8a4a08; font-size:11px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+      .quiz-record-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+      .quiz-record-stat { padding:9px 7px; border-radius:10px; background:rgb(255 255 255 / 72%); text-align:center; }
+      .quiz-record-stat b { display:block; font-size:18px; line-height:1.15; color:#111; }
+      .quiz-record-stat small { display:block; margin-top:3px; color:#777; font-size:10px; line-height:1.2; }
+      .quiz-record-message { margin:10px 0 0; color:#6f4a23; font-size:12px; line-height:1.4; }
+      @media (max-width:420px) { .quiz-record-grid { grid-template-columns:repeat(2,1fr); } }
+
       @media (max-width: 620px) {
         .poll-overlay { padding: 78px 10px 14px; }
         .poll-panel { max-height: calc(100vh - 92px); padding: 27px 18px 24px; border-radius: 16px; }
@@ -1332,6 +1345,17 @@ nav.wrap { gap: 22px; }
         <div class="poll-options" id="poll-options"></div>
         <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
         <p class="poll-note" id="poll-note">Choose an answer to test your engineering knowledge.</p>
+        <div class="quiz-record" id="quiz-record" aria-live="polite">
+          <div class="quiz-record-head"><strong>🏆 Your Quiz Record</strong><span>this browser</span></div>
+          <div class="quiz-record-grid">
+            <div class="quiz-record-stat"><b id="record-score">0/0</b><small>Correct</small></div>
+            <div class="quiz-record-stat"><b id="record-accuracy">—</b><small>Accuracy</small></div>
+            <div class="quiz-record-stat"><b id="record-streak">0</b><small>Current streak</small></div>
+            <div class="quiz-record-stat"><b id="record-best">0</b><small>Best streak</small></div>
+          </div>
+          <p class="quiz-record-message" id="record-message">Answer today’s quiz to start building your record.</p>
+        </div>
+
       </div>
     </div>
     <main>
@@ -2173,6 +2197,65 @@ nav.wrap { gap: 22px; }
       const correctIndex = activeQuiz[3];
       const explanation = activeQuiz[4];
       const voted = JSON.parse(localStorage.getItem(voteStoreKey) || "{}");
+      const recordStoreKey = "chillche-quiz-record-v1";
+      function loadQuizRecord() {
+        let record;
+        try { record = JSON.parse(localStorage.getItem(recordStoreKey) || "null"); } catch (_) { record = null; }
+        if (!record || typeof record !== "object") record = { answered: {}, currentStreak: 0, bestStreak: 0, lastDate: null };
+        if (!record.answered || typeof record.answered !== "object") record.answered = {};
+        // Preserve older browser answers in the lifetime score, even if they pre-date this feature.
+        Object.keys(voted).forEach((id) => {
+          if (Object.prototype.hasOwnProperty.call(record.answered, id)) return;
+          const quiz = quizBank.find((q) => "quiz-" + q[0] === id);
+          if (quiz) record.answered[id] = Number(voted[id]) === Number(quiz[3]);
+        });
+        return record;
+      }
+      let quizRecord = loadQuizRecord();
+      function previousIndiaDate(isoDate) {
+        const [y,m,d] = isoDate.split("-").map(Number);
+        const dt = new Date(Date.UTC(y, m - 1, d));
+        dt.setUTCDate(dt.getUTCDate() - 1);
+        return dt.toISOString().slice(0,10);
+      }
+      function saveQuizRecord() { localStorage.setItem(recordStoreKey, JSON.stringify(quizRecord)); }
+      function recordTodayAnswer(isCorrect) {
+        const dayKey = "day:" + dateKey;
+        if (Object.prototype.hasOwnProperty.call(quizRecord.answered, dayKey)) return;
+        quizRecord.answered[dayKey] = !!isCorrect;
+        if (isCorrect) {
+          quizRecord.currentStreak = quizRecord.lastDate === previousIndiaDate(dateKey) ? (Number(quizRecord.currentStreak) || 0) + 1 : 1;
+          quizRecord.bestStreak = Math.max(Number(quizRecord.bestStreak) || 0, quizRecord.currentStreak);
+        } else {
+          quizRecord.currentStreak = 0;
+        }
+        quizRecord.lastDate = dateKey;
+        saveQuizRecord();
+      }
+      function renderQuizRecord() {
+        // day:* entries are the authoritative new history; legacy quiz:* entries keep old answers visible in lifetime totals.
+        const dayEntries = Object.entries(quizRecord.answered).filter(([key]) => key.startsWith("day:"));
+        const legacyEntries = Object.entries(quizRecord.answered).filter(([key]) => key.startsWith("quiz-") && !Object.prototype.hasOwnProperty.call(quizRecord.answered, "day:" + dateKey));
+        const entries = dayEntries.length ? dayEntries : legacyEntries;
+        const total = entries.length;
+        const correct = entries.reduce((n,[,ok]) => n + (ok ? 1 : 0), 0);
+        const accuracy = total ? Math.round((correct / total) * 100) : null;
+        document.getElementById("record-score").textContent = `${correct}/${total}`;
+        document.getElementById("record-accuracy").textContent = accuracy === null ? "—" : `${accuracy}%`;
+        document.getElementById("record-streak").textContent = Number(quizRecord.currentStreak) || 0;
+        document.getElementById("record-best").textContent = Number(quizRecord.bestStreak) || 0;
+        let message = "Answer today’s quiz to start building your record.";
+        if (total) {
+          if (accuracy >= 90) message = "Precision Pro ⚙️ — that record is seriously sharp.";
+          else if (accuracy >= 75) message = "Shopfloor Sharp 🛠️ — strong engineering instincts.";
+          else if (accuracy >= 50) message = "Engineering Brain Activated 🧠 — keep the streak going.";
+          else message = "Every engineer starts somewhere — tomorrow is another shot. 🔧";
+        }
+        document.getElementById("record-message").textContent = message;
+      }
+      if (Object.prototype.hasOwnProperty.call(voted, pollId)) recordTodayAnswer(Number(voted[pollId]) === Number(correctIndex));
+      saveQuizRecord();
+      renderQuizRecord();
       const counts = answers.map(() => 0);
       let votePending = false;
       let resultsPromise = null;
@@ -2304,6 +2387,8 @@ nav.wrap { gap: 22px; }
           applyResults(rows);
           voted[pollId] = index;
           localStorage.setItem(voteStoreKey, JSON.stringify(voted));
+          recordTodayAnswer(index === correctIndex);
+          renderQuizRecord();
           votePending = false;
           renderPoll(true);
           if (typeof gtag === "function") gtag("event", "daily_quiz_answer", { poll_id: pollId, option_index: index });
